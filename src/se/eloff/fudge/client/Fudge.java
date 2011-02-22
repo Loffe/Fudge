@@ -39,7 +39,7 @@ public class Fudge implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Button sendButton = new Button("Send");
+		final Button sendButton = new Button("Skicka då");
 		final TextBox nameField = new TextBox();
 		nameField.setText("Eloff");
 		final Label errorLabel = new Label();
