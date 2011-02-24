@@ -2,11 +2,11 @@ package se.eloff.fudge.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -30,7 +30,7 @@ public class Fudge implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		final Button showLoginDialogButton = new Button("Skicka då");
+		final Button showLoginDialogButton = new Button("Login");
 
 		// We can add style names to widgets
 		showLoginDialogButton.addStyleName("showLoginDialogButton");
@@ -39,28 +39,20 @@ public class Fudge implements EntryPoint {
 
 		// Create the popup dialog box
 		final Window dialogBox = new Window();
+		dialogBox.setAutoCenter(true);
+		dialogBox.setAutoSize(true);
 		dialogBox.setTitle("Login");
 		dialogBox.setIsModal(true);
-		final Button closeButton = new Button("Close");
-		// We can set the id of a widget by accessing its Element
-		closeButton.getElement().setId("closeButton");
+		dialogBox.setShowModalMask(true);
+		
 		LoginScreen loginScreen = new LoginScreen();
-		dialogBox.addChild(loginScreen);
+		dialogBox.addItem(loginScreen);
 		
 		showLoginDialogButton.addClickHandler(new ClickHandler() {
-			
 			public void onClick(ClickEvent event) {
 				dialogBox.show();
 			}
 		});
-
-		// Add a handler to close the DialogBox
-		closeButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				dialogBox.hide();
-			}
-		});
-
 
 	}
 }
