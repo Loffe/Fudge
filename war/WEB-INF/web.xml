@@ -16,6 +16,16 @@
     <url-pattern>/fudge/greet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+  	<servlet-name>loginServlet</servlet-name>
+  	<servlet-class>se.eloff.fudge.server.LoginServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>loginServlet</servlet-name>
+  	<url-pattern>/fudge/login</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Fudge.html</welcome-file>

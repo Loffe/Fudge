@@ -1,44 +1,80 @@
 package se.eloff.fudge.client;
 
-import com.google.gwt.user.client.ui.Label;
-import com.smartgwt.client.widgets.Canvas;
+import se.eloff.fudge.client.bean.User;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.PasswordItem;
-import com.smartgwt.client.widgets.form.fields.SubmitItem;
+import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
-public class LoginScreen extends DynamicForm {
+public class LoginScreen extends DynamicForm implements ClickHandler {
 
-	// Error Label
-	private Label lblError = new Label();
+	private TextItem usernameItem;
+	private PasswordItem passwordItem;
+	private LoginServiceAsync svc;
+	private StaticTextItem errorItem;
 
 	public LoginScreen() {
-		
-		TextItem usernameItem = new TextItem();
+
+		usernameItem = new TextItem();
 		usernameItem.setTitle("Username");
 		usernameItem.setRequired(true);
-		
-		PasswordItem passwordItem = new PasswordItem();
+
+		passwordItem = new PasswordItem();
 		passwordItem.setTitle("Password");
 		passwordItem.setRequired(true);
-		
-		SubmitItem submitItem = new SubmitItem();
-		
-		this.setFields(usernameItem, passwordItem, submitItem);
+
+		ButtonItem buttonItem = new ButtonItem("Login");
+		buttonItem.addClickHandler(this);
 
 		
-		//this.draw();
+		errorItem = new StaticTextItem();
+		errorItem.setTitle("");
+
+		this.setFields(usernameItem, passwordItem, errorItem, buttonItem);
+	}
+
+	private LoginServiceAsync getService() {
+		if (svc == null) {
+			svc = (LoginServiceAsync) GWT.create(LoginService.class);
+		}
+		return svc;
 	}
 
 	/**
 	 * This method is called when the button is clicked
 	 */
 	private void checkLogin(String userName, String password) {
-		/** This is just a stub. More code to be added later */
 		System.out.println("Checking login for " + userName);
+		AsyncCallback<User> callback = new AsyncCallback<User>() {
+
+			public void onFailure(Throwable caught) {
+				errorItem.show();
+				if (caught != null) {
+					errorItem.setValue(caught.getMessage());
+				}
+				else {
+					errorItem.setValue("Error");
+				}
+			}
+
+			public void onSuccess(User result) {
+				System.out.println("Success");
+				errorItem.setValue("");
+				
+				
+			}
+		};
+		getService().checkLogin(userName, password, callback);
 	}
 
-	private void setErrorText(String errorMessage) {
-		lblError.setText(errorMessage);
+	public void onClick(ClickEvent event) {
+		checkLogin(usernameItem.getValueAsString(), passwordItem
+				.getValueAsString());
 	}
 }
