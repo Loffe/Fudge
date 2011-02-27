@@ -3,6 +3,7 @@ package se.eloff.fudge.client;
 import se.eloff.fudge.client.bean.User;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
@@ -18,9 +19,12 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 	private PasswordItem passwordItem;
 	private LoginServiceAsync svc;
 	private StaticTextItem errorItem;
+	private final EventBus bus;
 
-	public LoginScreen() {
+	public LoginScreen(EventBus bus) {
 
+		this.bus = bus;
+		
 		usernameItem = new TextItem();
 		usernameItem.setTitle("Username");
 		usernameItem.setRequired(true);
@@ -66,8 +70,8 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 			public void onSuccess(User result) {
 				System.out.println("Success");
 				errorItem.setValue("");
-				
-				
+				bus.fireEventFromSource(new LoginEvent(), LoginScreen.this);
+								
 			}
 		};
 		getService().checkLogin(userName, password, callback);

@@ -2,6 +2,10 @@ package se.eloff.fudge.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Window;
@@ -12,6 +16,8 @@ import com.smartgwt.client.widgets.events.ClickHandler;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Fudge implements EntryPoint {
+	
+	
 	/**
 	 * The message displayed to the user when the server cannot be reached or
 	 * returns an error.
@@ -26,10 +32,14 @@ public class Fudge implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
+	private EventBus bus;
+
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		bus = new SimpleEventBus();
+		
 		final Button showLoginDialogButton = new Button("Login");
 
 		// We can add style names to widgets
@@ -45,7 +55,7 @@ public class Fudge implements EntryPoint {
 		dialogBox.setIsModal(true);
 		dialogBox.setShowModalMask(true);
 		
-		LoginScreen loginScreen = new LoginScreen();
+		LoginScreen loginScreen = new LoginScreen(bus);
 		dialogBox.addItem(loginScreen);
 		
 		showLoginDialogButton.addClickHandler(new ClickHandler() {
@@ -53,6 +63,15 @@ public class Fudge implements EntryPoint {
 				dialogBox.show();
 			}
 		});
+
+		bus.addHandlerToSource(LoginEvent.TYPE, loginScreen, new LoginEventHandler() {
+
+			public void onLogin(LoginEvent event) {
+				System.out.println("Login Event handled with source!!");
+			}
+			
+		});
+		
 
 	}
 }
