@@ -70,7 +70,7 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 			public void onSuccess(User result) {
 				System.out.println("Success");
 				errorItem.setValue("");
-				bus.fireEventFromSource(new LoginEvent(), LoginScreen.this);
+				bus.fireEventFromSource(new LoginEvent(result), LoginScreen.this);
 								
 			}
 		};
