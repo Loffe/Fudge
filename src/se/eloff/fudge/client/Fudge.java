@@ -35,6 +35,8 @@ public class Fudge implements EntryPoint {
 
 	protected Dashboard dashboard;
 
+	protected IndexCanvas index;
+
 	/**
 	 * This is the entry point method.
 	 */
@@ -72,7 +74,13 @@ public class Fudge implements EntryPoint {
 				dashboard = new Dashboard(event.getUser());
 				dashboard.hide();
 				RootPanel.get("content").add(dashboard);
-				switchToView(dashboard);
+				
+				index = new IndexCanvas();
+				//index.hide();
+				RootPanel.get("content").add(index);
+				
+				
+				switchToView(index);
 			}
 			
 		});
@@ -81,6 +89,8 @@ public class Fudge implements EntryPoint {
 	}
 	
 	protected void switchToView(Canvas canvas) {
+		dashboard.hide();
+		//index.hide();
 		canvas.show();
 	}
 }
