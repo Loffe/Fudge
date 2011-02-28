@@ -36,4 +36,9 @@ public class LoginServiceImpl extends RemoteServiceServlet implements
 
 	}
 
+	public User getLoggedInUser() {
+		return getUserFromSession();
+	}
+
+
 }

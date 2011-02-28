@@ -21,9 +21,10 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 	private StaticTextItem errorItem;
 	private final EventBus bus;
 
-	public LoginScreen(EventBus bus) {
+	public LoginScreen(EventBus bus, LoginServiceAsync loginService) {
 
 		this.bus = bus;
+		svc = loginService;
 		
 		usernameItem = new TextItem();
 		usernameItem.setTitle("Username");
@@ -41,13 +42,6 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 		errorItem.setTitle("");
 
 		this.setFields(usernameItem, passwordItem, errorItem, buttonItem);
-	}
-
-	private LoginServiceAsync getService() {
-		if (svc == null) {
-			svc = (LoginServiceAsync) GWT.create(LoginService.class);
-		}
-		return svc;
 	}
 
 	/**
@@ -74,7 +68,7 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 								
 			}
 		};
-		getService().checkLogin(userName, password, callback);
+		svc.checkLogin(userName, password, callback);
 	}
 
 	public void onClick(ClickEvent event) {

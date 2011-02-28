@@ -1,14 +1,13 @@
 package se.eloff.fudge.client;
 
 import se.eloff.fudge.client.bean.Forum;
-import se.eloff.fudge.client.bean.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.layout.VStack;
 
-public class IndexCanvas extends Canvas{
+public class IndexCanvas extends VStack {
 
 	private ForumServiceAsync svc;
 	public IndexCanvas(){
@@ -41,7 +40,7 @@ public class IndexCanvas extends Canvas{
 		
 		for (Forum f : forums) {
 			Label forum = new Label(f.getName());
-			this.addChild(forum);
+			this.addMember(forum);
 		}
 		this.draw();
 		

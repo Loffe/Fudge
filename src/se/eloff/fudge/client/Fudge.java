@@ -1,9 +1,12 @@
 package se.eloff.fudge.client;
 
+import se.eloff.fudge.client.bean.User;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
@@ -32,6 +35,8 @@ public class Fudge implements EntryPoint {
 			.create(GreetingService.class);
 
 	private EventBus bus;
+	
+	LoginServiceAsync loginService;
 
 	protected Dashboard dashboard;
 
@@ -42,6 +47,25 @@ public class Fudge implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		bus = new SimpleEventBus();
+
+		getLoginService().getLoggedInUser(new AsyncCallback<User>() {
+			
+			public void onSuccess(User user) {
+				if (user == null) {
+					initLogin();
+				} else {
+					createComponents(user);
+				}
+			}
+			
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+
+	private void initLogin() {
 		
 		final Button showLoginDialogButton = new Button("Login");
 
@@ -58,7 +82,7 @@ public class Fudge implements EntryPoint {
 		dialogBox.setIsModal(true);
 		dialogBox.setShowModalMask(true);
 		
-		LoginScreen loginScreen = new LoginScreen(bus);
+		LoginScreen loginScreen = new LoginScreen(bus, loginService);
 		dialogBox.addItem(loginScreen);
 		
 		showLoginDialogButton.addClickHandler(new ClickHandler() {
@@ -71,26 +95,34 @@ public class Fudge implements EntryPoint {
 
 			public void onLogin(LoginEvent event) {
 				dialogBox.hide();
-				dashboard = new Dashboard(event.getUser());
-				dashboard.hide();
-				RootPanel.get("content").add(dashboard);
-				
-				index = new IndexCanvas();
-				//index.hide();
-				RootPanel.get("content").add(index);
-				
+				createComponents(event.getUser());
 				
 				switchToView(index);
 			}
 			
 		});
-		
-
+	}
+	
+	private LoginServiceAsync getLoginService() {
+		if (loginService == null) {
+			loginService = (LoginServiceAsync) GWT.create(LoginService.class);
+		}
+		return loginService;
 	}
 	
 	protected void switchToView(Canvas canvas) {
 		dashboard.hide();
 		//index.hide();
 		canvas.show();
+	}
+
+	private void createComponents(User user) {
+		dashboard = new Dashboard(user);
+		dashboard.hide();
+		RootPanel.get("content").add(dashboard);
+		
+		index = new IndexCanvas();
+		//index.hide();
+		RootPanel.get("content").add(index);
 	}
 }
