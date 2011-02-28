@@ -23,7 +23,7 @@ public class RealUserAuth implements UserAuthInterface {
 	public String testSQL() {
 	      String str = "Result: ";
 	      try {
-	         Class.forName("SQLite.JDBCDriver");        // SQLite
+	         Class.forName("org.sqlite.JDBC");        // SQLite
 	         Connection conn = DriverManager.getConnection(
 					"jdbc:sqlite:/" + System.getProperty("user.home") +
 					"/test.db");        // SQLite DB
