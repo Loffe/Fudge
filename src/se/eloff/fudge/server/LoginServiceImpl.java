@@ -25,7 +25,7 @@ public class LoginServiceImpl extends RemoteServiceServlet implements
 	private static final long serialVersionUID = 1;
 	
 	public LoginServiceImpl() {
-		userAuthInterface = new MockUserAuth();
+		userAuthInterface = new RealUserAuth();
 	}
 
 	private void setUserInSession(User user) {
