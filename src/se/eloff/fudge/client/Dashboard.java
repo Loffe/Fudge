@@ -7,7 +7,7 @@ import com.smartgwt.client.widgets.Label;
 
 public class Dashboard extends Canvas {
 	public Dashboard(User user) {
-		Label label = new Label("Hello" + user.getUserName());
+		Label label = new Label("Hello" + user.getUsername());
 		
 		this.addChild(label);
 	}

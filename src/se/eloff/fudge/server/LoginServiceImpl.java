@@ -10,9 +10,23 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class LoginServiceImpl extends RemoteServiceServlet implements
 		LoginService {
+	
+	interface UserAuthInterface {
+		public User getLoggedInUser();
+		public boolean validateUser(String username, String password);
+		
+	}
+	
+	private final UserAuthInterface userAuthInterface;
 	private static final String USER_SESSION = "GWTAppUser";
+	
+	private static boolean fakeLoggedinUser = true;
 
 	private static final long serialVersionUID = 1;
+	
+	public LoginServiceImpl() {
+		userAuthInterface = new MockUserAuth();
+	}
 
 	private void setUserInSession(User user) {
 		HttpSession session = getThreadLocalRequest().getSession();
@@ -24,11 +38,11 @@ public class LoginServiceImpl extends RemoteServiceServlet implements
 		return (User) session.getAttribute(USER_SESSION);
 	}
 
-	public User checkLogin(String userName, String password) throws LoginException {
+	public User checkLogin(String username, String password) throws LoginException {
 
-		if (userName.equalsIgnoreCase("gwt")) { // Check the database
+		if (userAuthInterface.validateUser(username, password)) { // Check the database
 			User user = new User();
-			user.setUserName(userName);
+			user.setUsername(username);
 			setUserInSession(user);
 			return user;
 		} else
@@ -37,6 +51,9 @@ public class LoginServiceImpl extends RemoteServiceServlet implements
 	}
 
 	public User getLoggedInUser() {
+		if (fakeLoggedinUser) {
+			return userAuthInterface.getLoggedInUser();
+		}
 		return getUserFromSession();
 	}
 
