@@ -5,7 +5,6 @@ import se.eloff.fudge.client.bean.Forum;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
@@ -15,7 +14,7 @@ public class IndexCanvas extends VStack {
 	private ForumServiceAsync svc;
 
 	public IndexCanvas() {
-		this.setWidth100();
+		this.setWidth("80%");
 		refresh();
 	}
 
@@ -55,11 +54,14 @@ public class IndexCanvas extends VStack {
 	protected Canvas createForumItem(Forum forum) {
 		HStack hstack = new HStack();
 		hstack.setStyleName("forum");
-		hstack.setWidth100();
+		hstack.setWidth("80%");
 		
 		VStack vstack = new VStack();
 		Label forúmlabel = new Label(forum.getName());
 		forúmlabel.setStyleName("forumName");
+		forúmlabel.setWidth(400);
+		forúmlabel.setHeight(40);
+		
 		vstack.addMember(forúmlabel);
 		vstack.addMember(new Label(forum.getDescription()));
 		

@@ -47,3 +47,12 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+.forum {
+	width: 100%;
+	background: #cfc;
+}
+
+.forumName {
+	font-size: 16pt;
+}
