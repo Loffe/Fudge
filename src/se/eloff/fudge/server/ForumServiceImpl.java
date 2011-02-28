@@ -28,6 +28,7 @@ ForumService  {
 		
 		for	(int i = 0; i < 10; i++) {
 			allForums[i] = new Forum("Forum number " + i, "a very very interesting and happy place");
+			allForums[i].setNrOfTopics(i);
 		}
 		return allForums;
 	}

@@ -4,23 +4,29 @@ import se.eloff.fudge.client.bean.Forum;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
 public class IndexCanvas extends VStack {
 
 	private ForumServiceAsync svc;
-	public IndexCanvas(){
+
+	public IndexCanvas() {
+		this.setWidth100();
 		refresh();
 	}
+
 	private ForumServiceAsync getService() {
 		if (svc == null) {
 			svc = (ForumServiceAsync) GWT.create(ForumService.class);
 		}
 		return svc;
 	}
-	
-	protected void refresh(){
+
+	protected void refresh() {
 		AsyncCallback<Forum[]> callback = new AsyncCallback<Forum[]>() {
 
 			public void onFailure(Throwable caught) {
@@ -34,15 +40,32 @@ public class IndexCanvas extends VStack {
 		};
 		getService().getAllForums(callback);
 	}
+
 	protected void updateList(Forum[] forums) {
 		this.clear();
 		System.out.println("update list" + forums.length);
-		
+
 		for (Forum f : forums) {
-			Label forum = new Label(f.getName());
-			this.addMember(forum);
+			this.addMember(createForumItem(f));
 		}
 		this.draw();
+
+	}
+
+	protected Canvas createForumItem(Forum forum) {
+		HStack hstack = new HStack();
+		hstack.setStyleName("forum");
+		hstack.setWidth100();
 		
+		VStack vstack = new VStack();
+		Label forúmlabel = new Label(forum.getName());
+		forúmlabel.setStyleName("forumName");
+		vstack.addMember(forúmlabel);
+		vstack.addMember(new Label(forum.getDescription()));
+		
+		hstack.addMember(vstack);
+		hstack.addMember(new Label(String.valueOf(forum.getNrOfTopics())));
+
+		return hstack;
 	}
 }
