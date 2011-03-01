@@ -1,12 +1,15 @@
 package se.eloff.fudge.server;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import se.eloff.fudge.client.ForumService;
 import se.eloff.fudge.client.bean.Forum;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class ForumServiceImpl extends RemoteServiceServlet implements
-ForumService  {
+		ForumService {
 
 	public boolean createForum(Forum forum) {
 		// TODO Auto-generated method stub
@@ -24,13 +27,16 @@ ForumService  {
 	}
 
 	public Forum[] getAllForums() {
-		Forum[] allForums = new Forum[10];
-		
-		for	(int i = 0; i < 10; i++) {
-			allForums[i] = new Forum("Forum number " + i, "a very very interesting and happy place");
-			allForums[i].setNrOfTopics(i);
+
+		DatabaseManager database = DatabaseManager.getInstance();
+		Connection conn = database.getConnection();
+
+		try {
+			return database.getAllForums(conn);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		return allForums;
+		return null;
 	}
 
 }

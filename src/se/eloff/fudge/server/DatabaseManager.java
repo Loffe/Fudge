@@ -7,6 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
+import se.eloff.fudge.client.bean.Forum;
 
 public class DatabaseManager {
 	protected static DatabaseManager instance;
@@ -80,7 +83,7 @@ public class DatabaseManager {
 		PreparedStatement prep = conn
 				.prepareStatement("insert into forums (name, description) "
 						+ " values (?, ?);");
-		for (int i = 0; i < 10; i++) {
+		for (int i = 1; i <= 10; i++) {
 			prep.setString(1, "Forum number " + i);
 			prep.setString(2, "a very very interesting and happy place");
 			prep.execute();
@@ -109,5 +112,19 @@ public class DatabaseManager {
 		}
 		rs.close();
 		return numRows == 1;
+	}
+
+	public Forum[] getAllForums(Connection conn) throws SQLException {
+		Statement stat = conn.createStatement();
+		ResultSet rs = stat.executeQuery("select fid, name, description from forums");
+		ArrayList<Forum> forums = new ArrayList<Forum>();
+		while (rs.next()) {
+			Forum f = new Forum();
+			f.setId(rs.getInt("fid"));
+			f.setName(rs.getString("name"));
+			f.setDescription(rs.getString("description"));
+			forums.add(f);
+		}
+		return forums.toArray(new Forum[0]);
 	}
 }
