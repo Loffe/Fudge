@@ -121,7 +121,13 @@ public class Fudge implements EntryPoint {
 		dashboard.hide();
 		RootPanel.get("content").add(dashboard);
 		
-		index = new IndexCanvas();
+		index = new IndexCanvas(bus);
+		bus.addHandler(ForumEvent.TYPE, new ForumEventHandler() {
+			
+			public void onShow(ForumEvent forumEvent) {
+				System.out.println("Gonna show forum. " + forumEvent.getForum().getId());
+			}
+		});
 		//index.hide();
 		RootPanel.get("content").add(index);
 	}
