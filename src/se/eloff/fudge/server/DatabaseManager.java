@@ -1,5 +1,6 @@
 package se.eloff.fudge.server;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -24,9 +25,21 @@ public class DatabaseManager {
 	public Connection getConnection() {
 		Connection conn = null;
 		try {
+			System.out.println("getConnection()");
+			String filename = "fudge.db";
+			String filePath = "/" + System.getProperty("user.home")
+					+ "/workspace/Fudge/war/" + filename;
+
+			File f = new File(filePath);
+			boolean createTable = !f.exists();
+
 			Class.forName("org.sqlite.JDBC");
-			conn = DriverManager.getConnection("jdbc:sqlite:/"
-					+ System.getProperty("user.home") + "/test.db");
+			conn = DriverManager.getConnection("jdbc:sqlite:/" + filePath);
+
+			if (createTable) {
+				createTables(conn);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -34,6 +47,7 @@ public class DatabaseManager {
 	}
 
 	public void createTables(Connection conn) throws SQLException {
+		System.out.println("Creating tables");
 		createTableUsers(conn);
 
 		createTableForums(conn);
@@ -65,24 +79,27 @@ public class DatabaseManager {
 		// Create default user
 		PreparedStatement prep = conn
 				.prepareStatement("insert into forums (name, description) "
-						+ " values (?, ?, ?);");
+						+ " values (?, ?);");
 		for (int i = 0; i < 10; i++) {
 			prep.setString(1, "Forum number " + i);
 			prep.setString(2, "a very very interesting and happy place");
 			prep.execute();
 		}
 	}
-	
+
 	/**
 	 * Check if a user with the given user name and password exists.
+	 * 
 	 * @param conn
 	 * @param username
 	 * @param password
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean checkUserCredentials(Connection conn, String username, String password) throws SQLException {
-		PreparedStatement stat = conn.prepareStatement("select * from users where name = ? and password = ?");
+	public boolean checkUserCredentials(Connection conn, String username,
+			String password) throws SQLException {
+		PreparedStatement stat = conn
+				.prepareStatement("select * from users where name = ? and password = ?");
 		stat.setString(1, username);
 		stat.setString(2, password);
 		ResultSet rs = stat.executeQuery();

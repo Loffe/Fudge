@@ -20,7 +20,7 @@ public class LoginServiceImpl extends RemoteServiceServlet implements
 	private final UserAuthInterface userAuthInterface;
 	private static final String USER_SESSION = "GWTAppUser";
 	
-	private static boolean fakeLoggedinUser = true;
+	private static boolean fakeLoggedinUser = false;
 
 	private static final long serialVersionUID = 1;
 	
