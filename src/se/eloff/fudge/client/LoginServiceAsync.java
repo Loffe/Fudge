@@ -11,5 +11,7 @@ public interface LoginServiceAsync {
 
 	void getLoggedInUser(AsyncCallback<User> callback);
 
+	void logout(AsyncCallback<Void> callback);
+
 
 }
