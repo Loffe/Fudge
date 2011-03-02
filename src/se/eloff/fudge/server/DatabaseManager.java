@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import se.eloff.fudge.client.bean.Forum;
+import se.eloff.fudge.client.bean.Topic;
 
 public class DatabaseManager {
 	protected static DatabaseManager instance;
@@ -54,6 +55,8 @@ public class DatabaseManager {
 		createTableUsers(conn);
 
 		createTableForums(conn);
+
+		createTableTopics(conn);
 	}
 
 	private void createTableUsers(Connection conn) throws SQLException {
@@ -90,6 +93,24 @@ public class DatabaseManager {
 		}
 	}
 
+	private void createTableTopics(Connection conn) throws SQLException {
+		Statement stat = conn.createStatement();
+		stat.executeUpdate("drop table if exists topics;");
+
+		stat.executeUpdate("create table topics (tid integer primary key, "
+				+ "name varchar(20), fid integer);");
+
+		// Create default user
+		PreparedStatement prep = conn
+				.prepareStatement("insert into topics (name, fid) "
+						+ " values (?, ?);");
+		for (int i = 1; i <= 10; i++) {
+			prep.setString(1, "Topic number " + i);
+			prep.setInt(2, 2 + i % 4);
+			prep.execute();
+		}
+	}
+
 	/**
 	 * Check if a user with the given user name and password exists.
 	 * 
@@ -116,7 +137,8 @@ public class DatabaseManager {
 
 	public Forum[] getAllForums(Connection conn) throws SQLException {
 		Statement stat = conn.createStatement();
-		ResultSet rs = stat.executeQuery("select fid, name, description from forums");
+		ResultSet rs = stat
+				.executeQuery("select fid, name, description from forums");
 		ArrayList<Forum> forums = new ArrayList<Forum>();
 		while (rs.next()) {
 			Forum f = new Forum();
@@ -126,5 +148,22 @@ public class DatabaseManager {
 			forums.add(f);
 		}
 		return forums.toArray(new Forum[0]);
+	}
+
+	public Topic[] getAllTopics(Connection conn, Forum forum)
+			throws SQLException {
+		PreparedStatement stat = conn
+				.prepareStatement("select tid, name from topics where fid = ?");
+		stat.setInt(1, forum.getId());
+		ResultSet rs = stat.executeQuery();
+		ArrayList<Topic> topics = new ArrayList<Topic>();
+		while (rs.next()) {
+			Topic t = new Topic();
+			t.setId(rs.getInt("tid"));
+			t.setName(rs.getString("name"));
+			t.setForumId(forum.getId());
+			topics.add(t);
+		}
+		return topics.toArray(new Topic[0]);
 	}
 }
