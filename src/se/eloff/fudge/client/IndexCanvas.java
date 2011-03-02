@@ -52,7 +52,7 @@ public class IndexCanvas extends VStack {
 		for (Forum f : forums) {
 			this.addMember(createForumItem(f));
 		}
-		this.draw();
+		//this.draw();
 
 	}
 

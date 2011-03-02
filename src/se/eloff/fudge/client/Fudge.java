@@ -13,6 +13,8 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.tab.TabSet;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -41,6 +43,16 @@ public class Fudge implements EntryPoint {
 	protected Dashboard dashboard;
 
 	protected IndexCanvas index;
+
+	private ForumCanvas forum;
+
+	private TabSet tabSet;
+
+	private Tab indexTab;
+
+	private Tab forumTab;
+
+	private Tab topicTab;
 
 	/**
 	 * This is the entry point method.
@@ -100,8 +112,6 @@ public class Fudge implements EntryPoint {
 						createComponents(event.getUser());
 						showLoginDialogButton.hide();
 						createLogoutButton();
-
-						switchToView(index);
 					}
 
 				});
@@ -138,27 +148,39 @@ public class Fudge implements EntryPoint {
 		return loginService;
 	}
 
-	protected void switchToView(Canvas canvas) {
-		dashboard.hide();
-		// index.hide();
-		canvas.show();
-	}
-
 	private void createComponents(User user) {
+		tabSet = new TabSet();
+		tabSet.setWidth("80%");
+		tabSet.setHeight100();
 		dashboard = new Dashboard(user);
 		dashboard.hide();
-		RootPanel.get("content").add(dashboard);
+		
+		indexTab = new Tab("Index");
+		forumTab = new Tab("Forums");
+		topicTab = new Tab("Topic");
+		
+		tabSet.addTab(indexTab);
+		tabSet.addTab(forumTab);
+		tabSet.addTab(topicTab);
+		
+		RootPanel.get("content").add(tabSet);
+
 
 		index = new IndexCanvas(bus);
+		forum = new ForumCanvas(bus);
 		bus.addHandler(ForumEvent.TYPE, new ForumEventHandler() {
 
 			public void onShow(ForumEvent forumEvent) {
 				System.out.println("Gonna show forum. "
 						+ forumEvent.getForum().getId());
+				forum.showForum(forumEvent.getForum());
+				tabSet.selectTab(forumTab);
 			}
 		});
+		
 		// index.hide();
-		RootPanel.get("content").add(index);
+		indexTab.setPane(index);
+		forumTab.setPane(forum);
 	}
 
 	private native void reload() /*-{
