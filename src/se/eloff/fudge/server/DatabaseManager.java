@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import se.eloff.fudge.client.bean.Forum;
+import se.eloff.fudge.client.bean.Post;
 import se.eloff.fudge.client.bean.Topic;
 
 public class DatabaseManager {
@@ -57,6 +58,8 @@ public class DatabaseManager {
 		createTableForums(conn);
 
 		createTableTopics(conn);
+
+		createTablePosts(conn);
 	}
 
 	private void createTableUsers(Connection conn) throws SQLException {
@@ -102,11 +105,37 @@ public class DatabaseManager {
 
 		// Create default user
 		PreparedStatement prep = conn
-				.prepareStatement("insert into topics (name, fid) "
-						+ " values (?, ?);");
+				.prepareStatement("insert into topics (tid, name, fid) "
+						+ " values (?, ?, ?);");
 		for (int i = 1; i <= 10; i++) {
-			prep.setString(1, "Topic number " + i);
-			prep.setInt(2, 2 + i % 4);
+			prep.setInt(1, i);
+			prep.setString(2, "Topic number " + i);
+			prep.setInt(3, 2 + i % 4);
+			prep.execute();
+		}
+	}
+
+	private void createTablePosts(Connection conn) throws SQLException {
+		Statement stat = conn.createStatement();
+		stat.executeUpdate("drop table if exists posts;");
+
+		stat.executeUpdate("create table posts (pid integer primary key, "
+				+ "int tid, int uid, date postedOnDate, text message);");
+
+		// Create default user
+		PreparedStatement prep = conn
+				.prepareStatement("insert into posts (pid, tid, uid, postedOnDate, message) "
+						+ " values (?, ?, ?, ?);");
+		for (int i = 1; i <= 20; i++) {
+			prep.setInt(1, i);
+			prep.setInt(2, 1 + i % 10);
+			prep.setInt(3, 0); // Fake user id
+			// Get current time
+			java.util.Date date = new java.util.Date();
+			prep.setDate(4, new java.sql.Date(date.getTime()));
+			prep.setString(5, "Hello forum. This is a awesome web "
+					+ "Kudos to you developers :D");
+
 			prep.execute();
 		}
 	}
@@ -165,5 +194,24 @@ public class DatabaseManager {
 			topics.add(t);
 		}
 		return topics.toArray(new Topic[0]);
+	}
+
+	public Post[] getAllPosts(Connection conn, Topic topic) throws SQLException {
+		PreparedStatement stat = conn
+				.prepareStatement("select pid, tid, uid, postedOnDate, message from posts where tid = ?");
+		stat.setInt(1, topic.getId());
+		ResultSet rs = stat.executeQuery();
+
+		ArrayList<Post> posts = new ArrayList<Post>();
+		while (rs.next()) {
+			Post p = new Post();
+			p.setId(rs.getInt("pid"));
+			p.setTopicId(rs.getInt("tid"));
+			p.setUserId(rs.getInt("uid"));
+			p.setPostedOnDate(rs.getDate("postedOnDate"));
+			p.setMessage(rs.getString("message"));
+			posts.add(p);
+		}
+		return posts.toArray(new Post[0]);
 	}
 }
