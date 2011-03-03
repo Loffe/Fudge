@@ -67,7 +67,7 @@ public class Fudge implements EntryPoint {
 					initLogin();
 				} else {
 					createComponents(user);
-					createLogoutButton();
+					createButtons();
 				}
 			}
 
@@ -112,13 +112,20 @@ public class Fudge implements EntryPoint {
 						dialogBox.hide();
 						createComponents(event.getUser());
 						showLoginDialogButton.clear();
-						createLogoutButton();
+						createButtons();
 					}
 
 				});
+		
+		
+
+		
 	}
 
-	protected void createLogoutButton() {
+
+
+	
+	protected void createButtons() {
 		final Button logoutButton = new Button("Logout");
 		logoutButton.setStyleName("showLoginDialogButton");
 		logoutButton.addClickHandler(new ClickHandler() {
@@ -138,8 +145,31 @@ public class Fudge implements EntryPoint {
 
 			}
 		});
-
+		
+		
+		
+		
+		
 		RootPanel.get("topMenu").add(logoutButton);
+		
+		final Button adminButton = new Button("Admin");
+		
+		// Create the popup dialog box
+		final Window adminWindow = new Window();
+		adminWindow.setAutoCenter(true);
+		adminWindow.setAutoSize(true);
+		adminWindow.setTitle("Admin");
+
+		final AdminScreen adminScreen = new AdminScreen();
+		adminWindow.addItem(adminScreen);
+
+		adminButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				adminWindow.show();
+				adminScreen.focus();
+			}
+		});	
+		RootPanel.get("topMenu").add(adminButton);
 	}
 
 	private LoginServiceAsync getLoginService() {
@@ -152,6 +182,8 @@ public class Fudge implements EntryPoint {
 	private void createComponents(User user) {
 		dashboard = new Dashboard(user);
 		dashboard.hide();
+		
+		
 
 
 		index = new IndexCanvas(bus);
