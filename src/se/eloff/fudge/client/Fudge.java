@@ -126,6 +126,7 @@ public class Fudge implements EntryPoint {
 
 	
 	protected void createButtons() {
+		//CREATE LOGOUT BUTTON **********************'
 		final Button logoutButton = new Button("Logout");
 		logoutButton.setStyleName("showLoginDialogButton");
 		logoutButton.addClickHandler(new ClickHandler() {
@@ -144,14 +145,10 @@ public class Fudge implements EntryPoint {
 				});
 
 			}
-		});
-		
-		
-		
-		
-		
+		});	
 		RootPanel.get("topMenu").add(logoutButton);
 		
+		//CREATE ADMINBUTTON *******************
 		final Button adminButton = new Button("Admin");
 		
 		// Create the popup dialog box

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import se.eloff.fudge.client.bean.Forum;
 import se.eloff.fudge.client.bean.Topic;
+import se.eloff.fudge.client.bean.User;
 
 public class DatabaseManager {
 	protected static DatabaseManager instance;
@@ -165,5 +166,18 @@ public class DatabaseManager {
 			topics.add(t);
 		}
 		return topics.toArray(new Topic[0]);
+	}
+
+	public User[] getAllUsers(Connection conn) throws SQLException{
+		Statement stat = conn.createStatement();
+		ResultSet rs = stat
+				.executeQuery("select name from forums");
+		ArrayList<User> users = new ArrayList<User>();
+		while (rs.next()) {
+			User u = new User();
+			u.setUsername(rs.getString("name"));
+			users.add(u);
+		}
+		return users.toArray(new User[0]);
 	}
 }
