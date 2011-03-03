@@ -46,6 +46,16 @@
     <url-pattern>/fudge/topic</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>postServlet</servlet-name>
+    <servlet-class>se.eloff.fudge.server.PostServiceImpl</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>postServlet</servlet-name>
+    <url-pattern>/fudge/post</url-pattern>
+  </servlet-mapping>
+
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Fudge.html</welcome-file>
