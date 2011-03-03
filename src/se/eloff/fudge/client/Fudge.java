@@ -111,7 +111,7 @@ public class Fudge implements EntryPoint {
 					public void onLogin(LoginEvent event) {
 						dialogBox.hide();
 						createComponents(event.getUser());
-						showLoginDialogButton.hide();
+						showLoginDialogButton.clear();
 						createLogoutButton();
 					}
 
