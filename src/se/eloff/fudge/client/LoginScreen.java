@@ -2,7 +2,6 @@ package se.eloff.fudge.client;
 
 import se.eloff.fudge.client.bean.User;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -12,6 +11,8 @@ import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 
 public class LoginScreen extends DynamicForm implements ClickHandler {
 
@@ -20,6 +21,8 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 	private LoginServiceAsync svc;
 	private StaticTextItem errorItem;
 	private final EventBus bus;
+	private boolean isChecking;
+	private ButtonItem buttonItem;
 
 	public LoginScreen(EventBus bus, LoginServiceAsync loginService) {
 
@@ -34,8 +37,18 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 		passwordItem.setTitle("Password");
 		passwordItem.setRequired(true);
 
-		ButtonItem buttonItem = new ButtonItem("Login");
+		buttonItem = new ButtonItem("Login");
 		buttonItem.addClickHandler(this);
+		
+		passwordItem.addKeyPressHandler(new KeyPressHandler() {
+			public void onKeyPress(KeyPressEvent event) {
+				System.out.println("HEJ");
+				String a = event.getKeyName();
+				if (event.getKeyName().equals("Enter")) {
+					onClick(null);
+				}
+			}
+		});
 
 		
 		errorItem = new StaticTextItem();
@@ -48,10 +61,18 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 	 * This method is called when the button is clicked
 	 */
 	private void checkLogin(String userName, String password) {
+		if (isChecking)
+			return;
+		
+		isChecking = true;
+		buttonItem.disable();
+		
 		System.out.println("Checking login for " + userName);
 		AsyncCallback<User> callback = new AsyncCallback<User>() {
 
 			public void onFailure(Throwable caught) {
+				isChecking = false;
+				buttonItem.enable();
 				errorItem.show();
 				if (caught != null) {
 					errorItem.setValue(caught.getMessage());
@@ -74,5 +95,10 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		checkLogin(usernameItem.getValueAsString(), passwordItem
 				.getValueAsString());
+	}
+	
+	@Override
+	public void focus() {
+		usernameItem.focusInItem();
 	}
 }

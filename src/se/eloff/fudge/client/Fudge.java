@@ -95,12 +95,13 @@ public class Fudge implements EntryPoint {
 		dialogBox.setIsModal(true);
 		dialogBox.setShowModalMask(true);
 
-		LoginScreen loginScreen = new LoginScreen(bus, loginService);
+		final LoginScreen loginScreen = new LoginScreen(bus, loginService);
 		dialogBox.addItem(loginScreen);
 
 		showLoginDialogButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				dialogBox.show();
+				loginScreen.focus();
 			}
 		});
 
@@ -149,21 +150,8 @@ public class Fudge implements EntryPoint {
 	}
 
 	private void createComponents(User user) {
-		tabSet = new TabSet();
-		tabSet.setWidth("80%");
-		tabSet.setHeight100();
 		dashboard = new Dashboard(user);
 		dashboard.hide();
-		
-		indexTab = new Tab("Index");
-		forumTab = new Tab("Forums");
-		topicTab = new Tab("Topic");
-		
-		tabSet.addTab(indexTab);
-		tabSet.addTab(forumTab);
-		tabSet.addTab(topicTab);
-		
-		RootPanel.get("content").add(tabSet);
 
 
 		index = new IndexCanvas(bus);
@@ -179,8 +167,23 @@ public class Fudge implements EntryPoint {
 		});
 		
 		// index.hide();
+		
+		indexTab = new Tab("Index");
+		forumTab = new Tab("Forums");
+		topicTab = new Tab("Topic");
+		
 		indexTab.setPane(index);
 		forumTab.setPane(forum);
+
+		tabSet = new TabSet();
+		tabSet.setWidth("80%");
+		tabSet.setHeight100();
+
+		tabSet.addTab(indexTab);
+		tabSet.addTab(forumTab);
+		tabSet.addTab(topicTab);
+		
+		RootPanel.get("content").add(tabSet);
 	}
 
 	private native void reload() /*-{
