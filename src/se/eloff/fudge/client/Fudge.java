@@ -1,5 +1,6 @@
 package se.eloff.fudge.client;
 
+import se.eloff.fudge.client.bean.Topic;
 import se.eloff.fudge.client.bean.User;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -9,7 +10,6 @@ import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.widgets.Button;
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -192,6 +192,14 @@ public class Fudge implements EntryPoint {
 						+ forumEvent.getForum().getId());
 				forum.showForum(forumEvent.getForum());
 				tabSet.selectTab(forumTab);
+			}
+		});
+		
+		bus.addHandler(TopicEvent.TYPE, new TopicEventHandler() {
+			@Override
+			public void onShow(TopicEvent topicEvent) {
+				Topic t = topicEvent.getTopic();
+				System.out.println("Gonna show topic " + t.getId() + " in forum " + t.getForumId());
 			}
 		});
 		
