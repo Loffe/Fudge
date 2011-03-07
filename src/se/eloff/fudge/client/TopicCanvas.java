@@ -1,19 +1,14 @@
 package se.eloff.fudge.client;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 import se.eloff.fudge.client.bean.Post;
 import se.eloff.fudge.client.bean.Topic;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
@@ -67,8 +62,8 @@ public class TopicCanvas extends VStack {
 		hstack.setWidth100();
 		hstack.setStyleName("post");
 
-		
-		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		DateTimeFormat formatter = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
 		Label dateLabel = new Label(formatter.format(post.getPostedOnDate()));
 		dateLabel.setStyleName("topicName");
 		
