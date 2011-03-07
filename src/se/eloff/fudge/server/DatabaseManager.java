@@ -121,12 +121,12 @@ public class DatabaseManager {
 		stat.executeUpdate("drop table if exists posts;");
 
 		stat.executeUpdate("create table posts (pid integer primary key, "
-				+ "int tid, int uid, date postedOnDate, text message);");
+				+ "tid int, uid int, postedOnDate date, message text);");
 
 		// Create default user
 		PreparedStatement prep = conn
 				.prepareStatement("insert into posts (pid, tid, uid, postedOnDate, message) "
-						+ " values (?, ?, ?, ?);");
+						+ " values (?, ?, ?, ?, ?);");
 		for (int i = 1; i <= 20; i++) {
 			prep.setInt(1, i);
 			prep.setInt(2, 1 + i % 10);
