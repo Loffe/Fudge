@@ -2,6 +2,8 @@ package se.eloff.fudge.client;
 
 import se.eloff.fudge.client.bean.User;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -10,6 +12,8 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 public class AdminScreen extends Canvas {
 
 	private ListGrid userGrid;
+	private UserServiceAsync svc;
+
 
 	public AdminScreen() {
 		userGrid = new ListGrid();
@@ -29,16 +33,37 @@ public class AdminScreen extends Canvas {
 
 		populateTable();
 	}
-
-	private void populateTable() {
-		//User[] users = 
-		
-		//for(int i = 0; i < users.length ; i++){
-		for(int i = 0; i < 5 ; i++){
-			ListGridRecord rec = new ListGridRecord();
-			rec.setAttribute("userName", "User: " + i);;
-			userGrid.addData(rec);
+	
+	private UserServiceAsync getService() {
+		if (svc == null) {
+			svc = (UserServiceAsync) GWT.create(UserService.class);
 		}
+		return svc;
 	}
+
+	public void populateTable() {
+		AsyncCallback<User[]> callback = new AsyncCallback<User[]>() {
+
+			public void onFailure(Throwable caught) {
+				System.out.println("Failed to get users!");
+				
+			}
+
+			public void onSuccess(User[] result) {
+				System.out.println("Successfully got users");
+				
+				for(int i = 0; i < result.length ; i++){
+					ListGridRecord rec = new ListGridRecord();
+					rec.setAttribute("userName", result[i].getUsername());
+					userGrid.addData(rec);
+					
+				}
+				
+				
+			}
+		};
+		getService().getAllUsers(callback);
+	}
+
 
 }

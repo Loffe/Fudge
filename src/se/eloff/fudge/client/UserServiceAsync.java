@@ -1,6 +1,5 @@
 package se.eloff.fudge.client;
 
-import se.eloff.fudge.client.bean.Forum;
 import se.eloff.fudge.client.bean.User;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;

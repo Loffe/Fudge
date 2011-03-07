@@ -201,7 +201,7 @@ public class DatabaseManager {
 	public User[] getAllUsers(Connection conn) throws SQLException{
 		Statement stat = conn.createStatement();
 		ResultSet rs = stat
-				.executeQuery("select name from forums");
+				.executeQuery("select name from users");
 		ArrayList<User> users = new ArrayList<User>();
 		while (rs.next()) {
 			User u = new User();
