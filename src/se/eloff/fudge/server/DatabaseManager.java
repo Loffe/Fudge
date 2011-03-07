@@ -134,7 +134,7 @@ public class DatabaseManager {
 			// Get current time
 			java.util.Date date = new java.util.Date();
 			prep.setDate(4, new java.sql.Date(date.getTime()));
-			prep.setString(5, "Hello forum. This is a awesome web "
+			prep.setString(5, "Hello forum. This is an awesome web application.\n "
 					+ "Kudos to you developers :D");
 
 			prep.execute();

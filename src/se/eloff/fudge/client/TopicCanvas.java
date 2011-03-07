@@ -61,16 +61,18 @@ public class TopicCanvas extends VStack {
 	}
 
 	protected Canvas createPostItem(final Post post) {
-		HStack hstack = new HStack();
-		hstack.setStyleName("topic");
-		hstack.setWidth("80%");
-
 		VStack vstack = new VStack();
+		
+		HStack hstack = new HStack();
+		hstack.setWidth100();
+		hstack.setStyleName("post");
+
+		
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Label postlabel = new Label(formatter.format(post.getPostedOnDate()));
-		postlabel.setStyleName("topicName");
-		postlabel.setWidth(400);
-		postlabel.setHeight(40);
+		Label dateLabel = new Label(formatter.format(post.getPostedOnDate()));
+		dateLabel.setStyleName("topicName");
+		
+		Label userLabel = new Label(String.valueOf(post.getUserId()));
 
 		// TODO: add click handlers and number of replies
 
@@ -81,12 +83,14 @@ public class TopicCanvas extends VStack {
 //			}
 //		});
 
-		vstack.addMember(postlabel);
+		hstack.addMember(dateLabel);
+		hstack.addMember(userLabel);
+
+		vstack.addMember(hstack);
 		vstack.addMember(new Label(post.getMessage()));
 
-		hstack.addMember(vstack);
 		// hstack.addMember(new Label(String.valueOf(topic.getNrOfTopics())));
 
-		return hstack;
+		return vstack;
 	}
 }
