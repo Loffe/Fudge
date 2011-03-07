@@ -5,6 +5,7 @@ import se.eloff.fudge.client.bean.Forum;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -66,6 +67,7 @@ public class IndexCanvas extends VStack {
 		forúmlabel.setStyleName("forumName");
 		forúmlabel.setWidth(400);
 		forúmlabel.setHeight(40);
+		forúmlabel.setCursor(Cursor.HAND);
 		
 		forúmlabel.addClickHandler(new ClickHandler() {
 			

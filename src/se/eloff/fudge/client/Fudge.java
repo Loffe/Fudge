@@ -54,6 +54,8 @@ public class Fudge implements EntryPoint {
 
 	private Tab topicTab;
 
+	private TopicCanvas topic;
+
 	/**
 	 * This is the entry point method.
 	 */
@@ -185,6 +187,7 @@ public class Fudge implements EntryPoint {
 
 		index = new IndexCanvas(bus);
 		forum = new ForumCanvas(bus);
+		topic = new TopicCanvas(bus);
 		bus.addHandler(ForumEvent.TYPE, new ForumEventHandler() {
 
 			public void onShow(ForumEvent forumEvent) {
@@ -200,6 +203,8 @@ public class Fudge implements EntryPoint {
 			public void onShow(TopicEvent topicEvent) {
 				Topic t = topicEvent.getTopic();
 				System.out.println("Gonna show topic " + t.getId() + " in forum " + t.getForumId());
+				topic.showTopic(t);
+				tabSet.selectTab(topicTab);
 			}
 		});
 		
@@ -211,6 +216,7 @@ public class Fudge implements EntryPoint {
 		
 		indexTab.setPane(index);
 		forumTab.setPane(forum);
+		topicTab.setPane(topic);
 
 		tabSet = new TabSet();
 		tabSet.setWidth("80%");

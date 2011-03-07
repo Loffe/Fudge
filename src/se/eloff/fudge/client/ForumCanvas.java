@@ -55,8 +55,6 @@ public class ForumCanvas extends VStack {
 		for (Topic t : topics) {
 			this.addMember(createTopicItem(t));
 		}
-		this.draw();
-
 	}
 
 	protected Canvas createTopicItem(final Topic topic) {
