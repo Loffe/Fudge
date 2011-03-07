@@ -44,7 +44,9 @@ public class ForumCanvas extends VStack {
 	}
 
 	protected void updateList(Topic[] topics) {
-		this.clear();
+		for (Canvas m : this.getMembers()) {
+			this.removeMember(m);
+		}
 		System.out.println("update list of topics " + topics.length);
 
 		for (Topic t : topics) {
