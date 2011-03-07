@@ -68,14 +68,16 @@ public class DatabaseManager {
 		stat.executeUpdate("drop table if exists users;");
 
 		stat.executeUpdate("create table users (uid integer primary key, "
-				+ "name varchar(20), password varchar(20));");
+				+ "name varchar(20), password varchar(20), isAdmin integer, isMod integer);");
 
 		// Create default user
 		PreparedStatement prep = conn
-				.prepareStatement("insert into users values (?, ?, ?);");
+				.prepareStatement("insert into users values (?, ?, ?, ?, ?);");
 		prep.setInt(1, 1);
 		prep.setString(2, "gwt");
 		prep.setString(3, "password");
+		prep.setInt(4, 1);
+		prep.setInt(5, 1);
 		prep.execute();
 	}
 
