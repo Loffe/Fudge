@@ -136,8 +136,9 @@ public class DatabaseManager {
 			// Get current time
 			java.util.Date date = new java.util.Date();
 			prep.setDate(4, new java.sql.Date(date.getTime()));
-			prep.setString(5, "Hello forum. This is an awesome web application.\n "
-					+ "Kudos to you developers :D");
+			prep.setString(5,
+					"Hello forum. This is an awesome web application.\n "
+							+ "Kudos to you developers :D");
 
 			prep.execute();
 		}
@@ -170,12 +171,10 @@ public class DatabaseManager {
 	public Forum[] getAllForums(Connection conn) throws SQLException {
 		Statement stat = conn.createStatement();
 		ResultSet rs = stat
-				.executeQuery(
-						"select forums.fid, forums.name, description, " +
-						"count(tid) as nrOfTopics " +
-						"from forums " +
-						"left join topics on forums.fid = topics.fid " +
-						"group by forums.fid");
+				.executeQuery("select forums.fid, forums.name, description, "
+						+ "count(tid) as nrOfTopics " + "from forums "
+						+ "left join topics on forums.fid = topics.fid "
+						+ "group by forums.fid");
 		ArrayList<Forum> forums = new ArrayList<Forum>();
 		while (rs.next()) {
 			Forum f = new Forum();
@@ -191,7 +190,9 @@ public class DatabaseManager {
 	public Topic[] getAllTopics(Connection conn, Forum forum)
 			throws SQLException {
 		PreparedStatement stat = conn
-				.prepareStatement("select tid, name from topics where fid = ?");
+				.prepareStatement("select tid, name,"
+						+ "(select message from posts where posts.tid = topics.tid order by postedOnDate asc limit 1) as message "
+						+ "from topics where fid = ?");
 		stat.setInt(1, forum.getId());
 		ResultSet rs = stat.executeQuery();
 		ArrayList<Topic> topics = new ArrayList<Topic>();
@@ -200,16 +201,15 @@ public class DatabaseManager {
 			t.setId(rs.getInt("tid"));
 			t.setName(rs.getString("name"));
 			t.setForumId(forum.getId());
+			t.setPost(rs.getString("message"));
 			topics.add(t);
 		}
 		return topics.toArray(new Topic[0]);
 	}
 
-
-	public User[] getAllUsers(Connection conn) throws SQLException{
+	public User[] getAllUsers(Connection conn) throws SQLException {
 		Statement stat = conn.createStatement();
-		ResultSet rs = stat
-				.executeQuery("select name from users");
+		ResultSet rs = stat.executeQuery("select name from users");
 		ArrayList<User> users = new ArrayList<User>();
 		while (rs.next()) {
 			User u = new User();
@@ -218,7 +218,7 @@ public class DatabaseManager {
 		}
 		return users.toArray(new User[0]);
 	}
-	
+
 	public Post[] getAllPosts(Connection conn, Topic topic) throws SQLException {
 		PreparedStatement stat = conn
 				.prepareStatement("select pid, tid, uid, postedOnDate, message from posts where tid = ?");

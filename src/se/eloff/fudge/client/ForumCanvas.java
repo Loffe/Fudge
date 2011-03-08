@@ -59,8 +59,8 @@ public class ForumCanvas extends VStack {
 
 	protected Canvas createTopicItem(final Topic topic) {
 		HStack hstack = new HStack();
+		hstack.setShowEdges(true);
 		hstack.setStyleName("topic");
-		hstack.setWidth("80%");
 
 		VStack vstack = new VStack();
 		Label topiclabel = new Label(topic.getName());
@@ -79,7 +79,7 @@ public class ForumCanvas extends VStack {
 		});
 
 		vstack.addMember(topiclabel);
-		// vstack.addMember(new Label(topic.getDescription()));
+		vstack.addMember(new Label(topic.getPost()));
 
 		hstack.addMember(vstack);
 		// hstack.addMember(new Label(String.valueOf(topic.getNrOfTopics())));

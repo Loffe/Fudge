@@ -8,6 +8,7 @@ public class Topic implements Serializable {
 	private int id;
 	private int forumId;
 	private String name;
+	private String post;
 
 	public Topic() {
 	}
@@ -34,5 +35,13 @@ public class Topic implements Serializable {
 
 	public int getForumId() {
 		return forumId;
+	}
+
+	public void setPost(String post) {
+		this.post = post;
+	}
+
+	public String getPost() {
+		return post;
 	}
 }
