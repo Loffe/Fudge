@@ -170,13 +170,19 @@ public class DatabaseManager {
 	public Forum[] getAllForums(Connection conn) throws SQLException {
 		Statement stat = conn.createStatement();
 		ResultSet rs = stat
-				.executeQuery("select fid, name, description from forums");
+				.executeQuery(
+						"select forums.fid, forums.name, description, " +
+						"count(tid) as nrOfTopics " +
+						"from forums " +
+						"left join topics on forums.fid = topics.fid " +
+						"group by forums.fid");
 		ArrayList<Forum> forums = new ArrayList<Forum>();
 		while (rs.next()) {
 			Forum f = new Forum();
 			f.setId(rs.getInt("fid"));
 			f.setName(rs.getString("name"));
 			f.setDescription(rs.getString("description"));
+			f.setNrOfTopics(rs.getInt("nrOfTopics"));
 			forums.add(f);
 		}
 		return forums.toArray(new Forum[0]);
