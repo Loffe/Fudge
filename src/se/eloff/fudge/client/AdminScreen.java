@@ -34,7 +34,7 @@ public class AdminScreen extends Canvas {
 		ListGridField nameField = new ListGridField("userName", "Username");
 
 		ListGridField moderatorField = new ListGridField("isModerator",
-				"Moderator?", 40);
+				"Moderator?");
 		moderatorField.setAlign(Alignment.CENTER);
 		moderatorField.setType(ListGridFieldType.BOOLEAN);
 
@@ -53,7 +53,11 @@ public class AdminScreen extends Canvas {
 
 			@Override
 			public void onClick(ClickEvent event) {
+				ListGridRecord[] recs = userGrid.getRecords();
+				// Do some magic selection
+				//userGrid.getAllEditRows();
 				
+				//userGrid.setEdit
 				
 			}
 			
