@@ -12,21 +12,47 @@ public class PostEditor extends DynamicForm {
 	private ButtonItem submitButton;
 
 	public PostEditor() {
+		this(false);
+	}
+
+	public PostEditor(boolean showTitle) {
 		this.setShowEdges(true);
 		this.setColWidths("*");
 		this.setTitleOrientation(TitleOrientation.TOP);
-		
-		title = new TextItem("Title");
-		title.setRequired(true);
-		title.setWidth("*");
-		
+
+		if (showTitle) {
+			title = new TextItem("Title");
+			title.setWidth("*");
+			title.setRequired(true);
+		}
+
 		message = new RichTextItem("Message");
 		message.setShowTitle(true);
 		message.setRequired(true);
 		message.setWidth("*");
-		
+
 		submitButton = new ButtonItem("Post");
-		
-		this.setFields(title, message, submitButton);
+
+		if (showTitle) {
+			this.setFields(title, message, submitButton);
+		} else {
+			this.setFields(message, submitButton);
+		}
+	}
+
+	public void setTitle(String title) {
+		this.title.setValue(title);
+	}
+
+	public String getTitle() {
+		return this.title.getValueAsString();
+	}
+
+	public void setMessage(String message) {
+		this.message.setValue(message);
+	}
+
+	public String getMessage() {
+		return (String) this.message.getValue();
 	}
 }
