@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface UserService extends RemoteService {
 	User[] getAllUsers();
 	boolean createUser(User user);
-	boolean deleteUser(User user);
+	boolean removeUser(String user);
 	boolean editUser(User user);
+	boolean setModerator(String user, Boolean isMod);
 }
