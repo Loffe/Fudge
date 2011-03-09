@@ -56,3 +56,9 @@ h1 {
 .forumName {
 	font-size: 16pt;
 }
+
+.post .date {
+	font-style: italic;
+	color: #666;
+	padding-bottom: 10px;
+}

@@ -10,8 +10,10 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.layout.HStack;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 
 public class TopicCanvas extends VStack {
@@ -102,18 +104,24 @@ public class TopicCanvas extends VStack {
 	}
 
 	protected Canvas createPostItem(final Post post) {
-		VStack vstack = new VStack();
-		
-		HStack hstack = new HStack();
+		HLayout hstack = new HLayout();
+		hstack.setPadding(5);
+		hstack.setShowEdges(true);
 		hstack.setWidth100();
+		hstack.setAutoHeight();
 		hstack.setStyleName("post");
-
+		
+		VLayout vstack = new VLayout();
 
 		DateTimeFormat formatter = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
-		Label dateLabel = new Label(formatter.format(post.getPostedOnDate()));
-		dateLabel.setStyleName("topicName");
+		Canvas dateLabel = new HTMLFlow(formatter.format(post.getPostedOnDate()));
+		dateLabel.setStyleName("date");
 		
-		Label userLabel = new Label(String.valueOf(post.getUserId()));
+		Canvas message = new HTMLFlow(post.getMessage());
+		message.setStyleName("message");
+		
+		Canvas userLabel = new HTMLFlow(String.valueOf(post.getUserId()));
+		userLabel.setStyleName("user");
 
 		// TODO: add click handlers and number of replies
 
@@ -124,14 +132,14 @@ public class TopicCanvas extends VStack {
 //			}
 //		});
 
-		hstack.addMember(dateLabel);
+		vstack.addMember(dateLabel);		
+		vstack.addMember(message);
+		
+		hstack.addMember(vstack);
 		hstack.addMember(userLabel);
-
-		vstack.addMember(hstack);
-		vstack.addMember(new Label(post.getMessage()));
 
 		// hstack.addMember(new Label(String.valueOf(topic.getNrOfTopics())));
 
-		return vstack;
+		return hstack;
 	}
 }
