@@ -57,6 +57,7 @@ public class TopicCanvas extends VStack {
 	}
 
 	protected void updateList(Post[] posts) {
+		TopicCanvas.this.setAnimateMembers(false);
 		for (Canvas m : this.getMembers()) {
 			this.removeMember(m);
 		}
@@ -85,6 +86,7 @@ public class TopicCanvas extends VStack {
 			@Override
 			public void onSuccess(Boolean result) {
 				int position = currentPosts.size();
+				TopicCanvas.this.setAnimateMembers(true);
 				TopicCanvas.this.addMember(createPostItem(post), position);
 				currentPosts.add(post);
 				postEditor.setMessage("");
