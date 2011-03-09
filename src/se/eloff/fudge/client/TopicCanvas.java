@@ -1,5 +1,7 @@
 package se.eloff.fudge.client;
 
+import java.util.ArrayList;
+
 import se.eloff.fudge.client.bean.Post;
 import se.eloff.fudge.client.bean.Topic;
 
@@ -18,10 +20,13 @@ public class TopicCanvas extends VStack {
 	private final EventBus bus;
 	private PostEditor postEditor;
 	protected Topic currentTopic;
+	protected ArrayList<Post> currentPosts;
 
 	public TopicCanvas(EventBus bus) {
 		this.bus = bus;
 		this.setWidth("80%");
+		
+		currentPosts = new ArrayList<Post>();
 	}
 
 	private PostServiceAsync getService() {
@@ -41,6 +46,10 @@ public class TopicCanvas extends VStack {
 
 			public void onSuccess(Post[] result) {
 				System.out.println("Successfully got posts");
+				currentPosts.clear();
+				for (Post p : result) {
+					currentPosts.add(p);
+				}
 				updateList(result);
 			}
 		};
@@ -67,7 +76,7 @@ public class TopicCanvas extends VStack {
 	}
 
 	protected void submitPost() {
-		Post post = new Post();
+		final Post post = new Post();
 		post.setMessage(postEditor.getMessage());
 		post.setTopicId(currentTopic.getId());
 		post.setCurrentTime();
@@ -75,8 +84,10 @@ public class TopicCanvas extends VStack {
 			
 			@Override
 			public void onSuccess(Boolean result) {
-				// TODO Auto-generated method stub
-				
+				int position = currentPosts.size();
+				TopicCanvas.this.addMember(createPostItem(post), position);
+				currentPosts.add(post);
+				postEditor.setMessage("");
 			}
 			
 			@Override
