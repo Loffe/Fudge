@@ -1,5 +1,7 @@
 package se.eloff.fudge.client;
 
+import java.util.ArrayList;
+
 import se.eloff.fudge.client.bean.Post;
 import se.eloff.fudge.client.bean.Topic;
 
@@ -16,10 +18,15 @@ public class TopicCanvas extends VStack {
 
 	private PostServiceAsync svc;
 	private final EventBus bus;
+	private PostEditor postEditor;
+	protected Topic currentTopic;
+	protected ArrayList<Post> currentPosts;
 
 	public TopicCanvas(EventBus bus) {
 		this.bus = bus;
 		this.setWidth("80%");
+		
+		currentPosts = new ArrayList<Post>();
 	}
 
 	private PostServiceAsync getService() {
@@ -30,6 +37,7 @@ public class TopicCanvas extends VStack {
 	}
 
 	public void showTopic(Topic topic) {
+		currentTopic = topic;
 		AsyncCallback<Post[]> callback = new AsyncCallback<Post[]>() {
 
 			public void onFailure(Throwable caught) {
@@ -38,6 +46,10 @@ public class TopicCanvas extends VStack {
 
 			public void onSuccess(Post[] result) {
 				System.out.println("Successfully got posts");
+				currentPosts.clear();
+				for (Post p : result) {
+					currentPosts.add(p);
+				}
 				updateList(result);
 			}
 		};
@@ -53,6 +65,38 @@ public class TopicCanvas extends VStack {
 		for (Post p : posts) {
 			this.addMember(createPostItem(p));
 		}
+		
+		postEditor = new PostEditor() {
+			@Override
+			protected void onSubmit() {
+				submitPost();
+			}
+		};
+		this.addMember(postEditor);
+	}
+
+	protected void submitPost() {
+		final Post post = new Post();
+		post.setMessage(postEditor.getMessage());
+		post.setTopicId(currentTopic.getId());
+		post.setCurrentTime();
+		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+			
+			@Override
+			public void onSuccess(Boolean result) {
+				int position = currentPosts.size();
+				TopicCanvas.this.addMember(createPostItem(post), position);
+				currentPosts.add(post);
+				postEditor.setMessage("");
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		getService().createPost(post, callback);
 	}
 
 	protected Canvas createPostItem(final Post post) {

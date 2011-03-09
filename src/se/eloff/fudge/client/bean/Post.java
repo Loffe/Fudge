@@ -62,4 +62,9 @@ public class Post implements Serializable {
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
+	public void setCurrentTime() {
+		java.util.Date date = new java.util.Date();
+		setPostedOnDate(new java.sql.Date(date.getTime()));
+	}
 }

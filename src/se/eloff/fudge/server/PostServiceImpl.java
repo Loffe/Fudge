@@ -13,7 +13,16 @@ public class PostServiceImpl extends RemoteServiceServlet implements PostService
 
 	@Override
 	public boolean createPost(Post post) {
-		// TODO Auto-generated method stub
+		System.out.println("createPost");
+		DatabaseManager database = DatabaseManager.getInstance();
+		Connection conn = database.getConnection();
+
+		try {
+			database.createPost(conn, post);
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
