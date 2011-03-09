@@ -16,6 +16,7 @@ public class TopicCanvas extends VStack {
 
 	private PostServiceAsync svc;
 	private final EventBus bus;
+	private PostEditor postEditor;
 
 	public TopicCanvas(EventBus bus) {
 		this.bus = bus;
@@ -53,6 +54,9 @@ public class TopicCanvas extends VStack {
 		for (Post p : posts) {
 			this.addMember(createPostItem(p));
 		}
+		
+		postEditor = new PostEditor();
+		this.addMember(postEditor);
 	}
 
 	protected Canvas createPostItem(final Post post) {
