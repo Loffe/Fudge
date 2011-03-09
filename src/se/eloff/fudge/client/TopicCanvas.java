@@ -11,8 +11,10 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.HTMLFlow;
+import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 
@@ -104,14 +106,14 @@ public class TopicCanvas extends VStack {
 	}
 
 	protected Canvas createPostItem(final Post post) {
-		HLayout hstack = new HLayout();
+		Layout hstack = new HLayout();
 		hstack.setPadding(5);
 		hstack.setShowEdges(true);
 		hstack.setWidth100();
 		hstack.setAutoHeight();
 		hstack.setStyleName("post");
 		
-		VLayout vstack = new VLayout();
+		Layout vstack = new VLayout();
 
 		DateTimeFormat formatter = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
 		Canvas dateLabel = new HTMLFlow(formatter.format(post.getPostedOnDate()));
@@ -120,25 +122,26 @@ public class TopicCanvas extends VStack {
 		Canvas message = new HTMLFlow(post.getMessage());
 		message.setStyleName("message");
 		
+		Layout userStack = new VLayout();
+		userStack.setWidth(100);
+		userStack.setStyleName("user");
+		
+		// TODO: add user name and email to post
 		Canvas userLabel = new HTMLFlow(String.valueOf(post.getUserId()));
-		userLabel.setStyleName("user");
-
-		// TODO: add click handlers and number of replies
-
-//		topiclabel.addClickHandler(new ClickHandler() {
-//
-//			public void onClick(ClickEvent event) {
-//				bus.fireEvent(new TopicEvent(post));
-//			}
-//		});
+		
+		// TODO: create hash from user email
+		String hash = "475e55fc4e351736ee34946621bedd80";
+		String url = "http://www.gravatar.com/avatar/" + hash + ".png";
+		Canvas gravatar = new Img(url, 80, 80);
 
 		vstack.addMember(dateLabel);		
 		vstack.addMember(message);
 		
+		userStack.addMember(userLabel);
+		userStack.addMember(gravatar);
+		
 		hstack.addMember(vstack);
-		hstack.addMember(userLabel);
-
-		// hstack.addMember(new Label(String.valueOf(topic.getNrOfTopics())));
+		hstack.addMember(userStack);
 
 		return hstack;
 	}
