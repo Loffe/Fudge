@@ -17,6 +17,7 @@ public class TopicCanvas extends VStack {
 	private PostServiceAsync svc;
 	private final EventBus bus;
 	private PostEditor postEditor;
+	protected Topic currentTopic;
 
 	public TopicCanvas(EventBus bus) {
 		this.bus = bus;
@@ -31,6 +32,7 @@ public class TopicCanvas extends VStack {
 	}
 
 	public void showTopic(Topic topic) {
+		currentTopic = topic;
 		AsyncCallback<Post[]> callback = new AsyncCallback<Post[]>() {
 
 			public void onFailure(Throwable caught) {
@@ -55,8 +57,35 @@ public class TopicCanvas extends VStack {
 			this.addMember(createPostItem(p));
 		}
 		
-		postEditor = new PostEditor();
+		postEditor = new PostEditor() {
+			@Override
+			protected void onSubmit() {
+				submitPost();
+			}
+		};
 		this.addMember(postEditor);
+	}
+
+	protected void submitPost() {
+		Post post = new Post();
+		post.setMessage(postEditor.getMessage());
+		post.setTopicId(currentTopic.getId());
+		post.setCurrentTime();
+		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+			
+			@Override
+			public void onSuccess(Boolean result) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		getService().createPost(post, callback);
 	}
 
 	protected Canvas createPostItem(final Post post) {

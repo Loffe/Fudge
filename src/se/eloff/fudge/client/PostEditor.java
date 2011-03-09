@@ -5,8 +5,10 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ButtonItem;
 import com.smartgwt.client.widgets.form.fields.RichTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
-public class PostEditor extends DynamicForm {
+public abstract class PostEditor extends DynamicForm implements ClickHandler {
 	private RichTextItem message;
 	private TextItem title;
 	private ButtonItem submitButton;
@@ -17,7 +19,6 @@ public class PostEditor extends DynamicForm {
 
 	public PostEditor(boolean showTitle) {
 		this.setShowEdges(true);
-		this.setColWidths("*");
 		this.setTitleOrientation(TitleOrientation.TOP);
 
 		if (showTitle) {
@@ -32,6 +33,7 @@ public class PostEditor extends DynamicForm {
 		message.setWidth("*");
 
 		submitButton = new ButtonItem("Post");
+		submitButton.addClickHandler(this);
 
 		if (showTitle) {
 			this.setFields(title, message, submitButton);
@@ -55,4 +57,12 @@ public class PostEditor extends DynamicForm {
 	public String getMessage() {
 		return (String) this.message.getValue();
 	}
+
+	@Override
+	public void onClick(ClickEvent event) {
+		this.onSubmit();
+	}
+
+	abstract protected void onSubmit();
+	
 }

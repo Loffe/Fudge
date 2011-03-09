@@ -67,8 +67,9 @@ public class DatabaseManager {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate("drop table if exists users;");
 
-		stat.executeUpdate("create table users (uid integer primary key, "
-				+ "name varchar(20), password varchar(20), isAdmin integer, isMod integer);");
+		stat
+				.executeUpdate("create table users (uid integer primary key, "
+						+ "name varchar(20), password varchar(20), isAdmin integer, isMod integer);");
 
 		// Create default user
 		PreparedStatement prep = conn
@@ -236,5 +237,17 @@ public class DatabaseManager {
 			posts.add(p);
 		}
 		return posts.toArray(new Post[0]);
+	}
+
+	public void createPost(Connection conn, Post post) throws SQLException {
+		PreparedStatement prep = conn
+				.prepareStatement("insert into posts (tid, uid, postedOnDate, message) "
+						+ " values (?, ?, ?, ?);");
+		prep.setInt(1, post.getTopicId());
+		prep.setInt(2, post.getUserId()); // Fake user id
+		prep.setDate(3, post.getPostedOnDate());
+		prep.setString(4, post.getMessage());
+
+		prep.execute();
 	}
 }
