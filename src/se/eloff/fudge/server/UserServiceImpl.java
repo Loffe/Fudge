@@ -34,15 +34,38 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@Override
-	public boolean deleteUser(User user) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean removeUser(String user) {
+		System.out.println("ZOMG deleting user! :: " + user);
+		//TODO swap to real removal here instead of syso
+		/*DatabaseManager database = DatabaseManager.getInstance();
+		Connection conn = database.getConnection();
+
+		try {
+			return database.deleteUser(conn, user);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}*/
+		return true;
 	}
 
 	@Override
 	public boolean editUser(User user) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean setModerator(String user, Boolean isMod) {
+		System.out.println("setting moderator status to: " + isMod + "on user: " + user);
+		DatabaseManager database = DatabaseManager.getInstance();
+		Connection conn = database.getConnection();
+
+		try {
+			return database.setModerator(conn, user, isMod);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 

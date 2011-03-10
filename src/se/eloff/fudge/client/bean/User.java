@@ -43,6 +43,9 @@ public class User implements Serializable {
 		return isAdmin;
 	}
 	
+	public void setModeratorTights(boolean isMod){
+		this.isMod = isMod;
+	}
 	public boolean getModeratorRights(){
 		return isMod;
 	}

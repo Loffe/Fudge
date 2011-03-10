@@ -8,10 +8,13 @@ public interface UserServiceAsync {
 
 	void createUser(User user, AsyncCallback<Boolean> callback);
 
-	void deleteUser(User user, AsyncCallback<Boolean> callback);
+	void removeUser(String user, AsyncCallback<Boolean> callback);
 
 	void editUser(User user, AsyncCallback<Boolean> callback);
 
 	void getAllUsers(AsyncCallback<User[]> callback);
+
+	void setModerator(String user, Boolean isMod,
+			AsyncCallback<Boolean> callback);
 
 }

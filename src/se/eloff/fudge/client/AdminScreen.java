@@ -54,6 +54,17 @@ public class AdminScreen extends Canvas {
 			@Override
 			public void onClick(ClickEvent event) {
 				ListGridRecord[] recs = userGrid.getRecords();
+				for( ListGridRecord rec : recs){
+					setModerator(rec.getAttributeAsString("userName"), rec.getAttributeAsBoolean("isModerator"));
+
+					if(rec.getAttributeAsBoolean("removeField") == true){
+						removeUser(rec.getAttributeAsString("userName"));						
+					}
+					
+					//System.out.println(userGrid.getEditedCell(0, "isModerator"));
+					//userGrid.setEditValue(rowNum, fieldName, value)
+
+				}
 				// Do some magic selection
 				//userGrid.getAllEditRows();
 				
@@ -66,6 +77,43 @@ public class AdminScreen extends Canvas {
 		this.addChild(vl);
 
 		populateTable();
+	}
+
+	protected void setModerator(String user,
+			Boolean isMod) {
+		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+
+			public void onFailure(Throwable caught) {
+				System.out.println("Failed to set user mod rights!");
+
+			}
+
+			public void onSuccess(Boolean result) {
+				System.out.println("Successfully set user mod rights");
+				}
+
+			
+		};
+		getService().setModerator(user, isMod, callback);
+		
+	}
+
+	protected void removeUser(String user) {
+		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+
+			public void onFailure(Throwable caught) {
+				System.out.println("Failed to remove user!");
+
+			}
+
+			public void onSuccess(Boolean result) {
+				System.out.println("Successfully removed user");
+				}
+
+			
+		};
+		getService().removeUser(user, callback);
+		
 	}
 
 	private UserServiceAsync getService() {
@@ -89,6 +137,8 @@ public class AdminScreen extends Canvas {
 				for (int i = 0; i < result.length; i++) {
 					ListGridRecord rec = new ListGridRecord();
 					rec.setAttribute("userName", result[i].getUsername());
+					System.out.println("MODRIGHTS:  " + result[i].getModeratorRights());
+					rec.setAttribute("isModerator", result[i].getModeratorRights());
 					userGrid.addData(rec);
 
 				}
