@@ -280,4 +280,23 @@ public class DatabaseManager {
 
 		prep.execute();
 	}
+
+	public Topic createTopic(Connection conn, Topic topic, Post post) throws SQLException {
+		PreparedStatement prep = conn.prepareStatement("insert into topics (fid, name) values (?, ?)");
+		prep.setInt(1, topic.getForumId());
+		prep.setString(2, topic.getName());
+		prep.execute();
+
+		// fetch the topic id and use it for the associated post.
+		ResultSet rs = prep.getGeneratedKeys();
+		rs.next();
+		int tid = rs.getInt(1);
+		post.setTopicId(tid);
+		createPost(conn, post);
+
+		topic.setId(tid);
+		topic.setPost(post.getMessage());
+
+		return topic;
+	}
 }

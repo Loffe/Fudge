@@ -1,10 +1,12 @@
 package se.eloff.fudge.client;
 
 import se.eloff.fudge.client.bean.Forum;
+import se.eloff.fudge.client.bean.Post;
 import se.eloff.fudge.client.bean.Topic;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
@@ -19,6 +21,7 @@ public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 
 	private TopicServiceAsync svc;
 	private Window createTopicDialog;
+	protected PostEditor editor;
 
 	public ForumCanvas(EventBus bus) {
 		super(bus);
@@ -92,7 +95,43 @@ public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 		dialogBox.setIsModal(true);
 		dialogBox.setShowModalMask(true);
 
+		editor = new PostEditor(true) {
+
+			@Override
+			protected void onSubmit() {
+				submitTopic();
+			}
+		};
+
+		dialogBox.addItem(editor);
+
 		createTopicDialog = dialogBox;
 		return createTopicDialog;
+	}
+
+	protected void submitTopic() {
+		final Topic topic = new Topic();
+		topic.setName(editor.getTitle());
+		topic.setForumId(currentContainer.getId());
+
+		Post post = new Post();
+		post.setMessage(editor.getMessage());
+		post.setCurrentTime();
+
+		AsyncCallback<Topic> callback = new AsyncCallback<Topic>() {
+			@Override
+			public void onSuccess(Topic result) {
+				appendItem(result);
+				editor.setMessage("");
+				editor.setTitle("");
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+		};
+		getService().createTopic(topic, post, callback);
 	}
 }
