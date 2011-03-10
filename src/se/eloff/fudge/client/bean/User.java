@@ -12,6 +12,7 @@ public class User implements Serializable {
 	private String password;
 	private boolean isAdmin;
 	private boolean isMod;
+	private int id;
 
 	public User(String username, String password, boolean isAdmin, boolean isMod) {
 		this.username = username;
@@ -34,6 +35,10 @@ public class User implements Serializable {
 	public String getPassword() {
 		return password;
 	}
+	
+	public void setId(int id){
+		this.id = id;
+	}
 
 	public void setPassword(String password) {
 		this.password = password;
@@ -43,11 +48,18 @@ public class User implements Serializable {
 		return isAdmin;
 	}
 	
-	public void setModeratorTights(boolean isMod){
+	public void setAdminRights(boolean isAdmin){
+		this.isAdmin = isAdmin;
+	}
+	
+	public void setModeratorRights(boolean isMod){
 		this.isMod = isMod;
 	}
 	public boolean getModeratorRights(){
 		return isMod;
+	}
+	public int getId(){
+		return id;
 	}
 
 }

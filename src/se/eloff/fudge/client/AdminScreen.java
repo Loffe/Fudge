@@ -14,6 +14,8 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.EditCompleteEvent;
+import com.smartgwt.client.widgets.grid.events.EditCompleteHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class AdminScreen extends Canvas {
@@ -30,11 +32,92 @@ public class AdminScreen extends Canvas {
 		userGrid.setCanEdit(true);
 		userGrid.setEditEvent(ListGridEditEvent.CLICK);
 		userGrid.setModalEditing(true);
+		userGrid.addEditCompleteHandler(new EditCompleteHandler() {
+
+			@Override
+			public void onEditComplete(EditCompleteEvent event) {
+				System.out.println("finished editing of a record detected....");
+				final ListGridRecord record = userGrid.getRecord(event
+						.getRowNum());
+				User user = (User) record.getAttributeAsObject("userObject");
+				User newUser = null;
+
+				if (user == null) {
+					newUser = new User();
+					newUser
+							.setUsername(record
+									.getAttributeAsString("userName"));
+					newUser.setModeratorRights(record
+							.getAttributeAsBoolean("isMod"));
+
+					AsyncCallback<User> callback = new AsyncCallback<User>() {
+
+						public void onFailure(Throwable caught) {
+							System.out.println("failed to create new user");
+						}
+
+						public void onSuccess(User result) {
+							System.out.println("success in creating new user");
+							record.setAttribute("userObject", result);
+
+						}
+					};
+					getService().createUser(newUser, callback);
+
+				}
+
+				else {
+
+					AsyncCallback<User> callback = new AsyncCallback<User>() {
+
+						public void onFailure(Throwable caught) {
+							System.out.println("failed to edit user");
+						}
+
+						public void onSuccess(User result) {
+							System.out.println("success in editing user");
+							record.setAttribute("userObject", result);
+						}
+					};
+					user.setModeratorRights(record
+							.getAttributeAsBoolean("isMod"));
+					for (String attr : record.getAttributes()) {
+						System.out.println(attr + " = "
+								+ record.getAttribute(attr));
+					}
+					System.out.println("upptäckte att recordets modrights är "
+							+ record.getAttributeAsBoolean("isMod"));
+					user.setUsername(record.getAttributeAsString("userName"));
+					getService().editUser(user, callback);
+				}
+
+				// FEL HÄR EXPECTED INT OFTAST NULL POINTER INNNAN OCKSÅ OM MAN
+				// INTE KLICKAR I OCH KLICKAR UR
+
+				System.out.println("removefield: "
+						+ record.getAttributeAsBoolean("removeField"));
+
+				AsyncCallback<User> callback = new AsyncCallback<User>() {
+
+					public void onFailure(Throwable caught) {
+						System.out.println("failed to remove user");
+					}
+
+					public void onSuccess(User result) {
+						System.out.println("success in removing user");
+						userGrid.removeData(record);
+					}
+				};
+				if (record.getAttributeAsBoolean("removeField") == true) {
+					getService().removeUser(user, callback);
+				}
+
+			}
+		});
 
 		ListGridField nameField = new ListGridField("userName", "Username");
 
-		ListGridField moderatorField = new ListGridField("isModerator",
-				"Moderator?");
+		ListGridField moderatorField = new ListGridField("isMod", "Moderator?");
 		moderatorField.setAlign(Alignment.CENTER);
 		moderatorField.setType(ListGridFieldType.BOOLEAN);
 
@@ -49,71 +132,20 @@ public class AdminScreen extends Canvas {
 		vl.addMember(userGrid);
 		Button saveButton = new Button("Update changes");
 		vl.addMember(saveButton);
-		saveButton.addClickHandler(new ClickHandler(){
+		saveButton.addClickHandler(new ClickHandler() {
 
-			@Override
 			public void onClick(ClickEvent event) {
-				ListGridRecord[] recs = userGrid.getRecords();
-				for( ListGridRecord rec : recs){
-					setModerator(rec.getAttributeAsString("userName"), rec.getAttributeAsBoolean("isModerator"));
+				ListGridRecord defaultRecordValue = new ListGridRecord();
+				userGrid.startEditingNew(defaultRecordValue);
 
-					if(rec.getAttributeAsBoolean("removeField") == true){
-						removeUser(rec.getAttributeAsString("userName"));						
-					}
-					
-					//System.out.println(userGrid.getEditedCell(0, "isModerator"));
-					//userGrid.setEditValue(rowNum, fieldName, value)
-
-				}
-				// Do some magic selection
-				//userGrid.getAllEditRows();
-				
-				//userGrid.setEdit
-				
 			}
-			
 		});
 
 		this.addChild(vl);
 
 		populateTable();
-	}
-
-	protected void setModerator(String user,
-			Boolean isMod) {
-		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-
-			public void onFailure(Throwable caught) {
-				System.out.println("Failed to set user mod rights!");
-
-			}
-
-			public void onSuccess(Boolean result) {
-				System.out.println("Successfully set user mod rights");
-				}
-
-			
-		};
-		getService().setModerator(user, isMod, callback);
-		
-	}
-
-	protected void removeUser(String user) {
-		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-
-			public void onFailure(Throwable caught) {
-				System.out.println("Failed to remove user!");
-
-			}
-
-			public void onSuccess(Boolean result) {
-				System.out.println("Successfully removed user");
-				}
-
-			
-		};
-		getService().removeUser(user, callback);
-		
+		ListGridRecord defaultRecordValue = new ListGridRecord();
+		userGrid.startEditingNew(defaultRecordValue);
 	}
 
 	private UserServiceAsync getService() {
@@ -137,8 +169,9 @@ public class AdminScreen extends Canvas {
 				for (int i = 0; i < result.length; i++) {
 					ListGridRecord rec = new ListGridRecord();
 					rec.setAttribute("userName", result[i].getUsername());
-					System.out.println("MODRIGHTS:  " + result[i].getModeratorRights());
-					rec.setAttribute("isModerator", result[i].getModeratorRights());
+					rec.setAttribute("isMod", result[i].getModeratorRights());
+					rec.setAttribute("id", result[i].getId());
+					rec.setAttribute("userObject", result[i]);
 					userGrid.addData(rec);
 
 				}

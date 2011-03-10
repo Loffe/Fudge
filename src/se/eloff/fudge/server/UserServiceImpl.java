@@ -8,7 +8,8 @@ import se.eloff.fudge.client.bean.User;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class UserServiceImpl extends RemoteServiceServlet implements UserService{
+public class UserServiceImpl extends RemoteServiceServlet implements
+		UserService {
 
 	/**
 	 * 
@@ -28,46 +29,42 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
 	}
 
 	@Override
-	public boolean createUser(User user) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeUser(String user) {
-		System.out.println("ZOMG deleting user! :: " + user);
-		//TODO swap to real removal here instead of syso
-		/*DatabaseManager database = DatabaseManager.getInstance();
-		Connection conn = database.getConnection();
-
-		try {
-			return database.deleteUser(conn, user);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}*/
-		return true;
-	}
-
-	@Override
-	public boolean editUser(User user) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean setModerator(String user, Boolean isMod) {
-		System.out.println("setting moderator status to: " + isMod + "on user: " + user);
+	public User createUser(User user) {
 		DatabaseManager database = DatabaseManager.getInstance();
 		Connection conn = database.getConnection();
 
 		try {
-			return database.setModerator(conn, user, isMod);
+			database.createUser(conn, user);
+			return user;
+		} catch (SQLException e) {
+			e.printStackTrace();		
+		}
+		return user;
+	}
+
+	@Override
+	public User removeUser(User user) {
+		DatabaseManager database = DatabaseManager.getInstance();
+		Connection conn = database.getConnection();
+
+		try {
+			return database.removeUser(conn, user);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return true;
+		return user;
 	}
 
+	@Override
+	public User editUser(User user) {
+		DatabaseManager database = DatabaseManager.getInstance();
+		Connection conn = database.getConnection();
+		try {
+			return database.editUser(conn, user);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
 
 }
-

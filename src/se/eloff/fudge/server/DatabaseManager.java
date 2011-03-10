@@ -69,7 +69,7 @@ public class DatabaseManager {
 
 		stat
 				.executeUpdate("create table users (uid integer primary key, "
-						+ "name varchar(20), password varchar(20), isAdmin integer, isMod integer);");
+						+ "name varchar(20) unique , password varchar(20), isAdmin integer, isMod integer);");
 
 		// Create default user
 		PreparedStatement prep = conn
@@ -107,7 +107,7 @@ public class DatabaseManager {
 		stat.executeUpdate("create table topics (tid integer primary key, "
 				+ "name varchar(20), fid integer);");
 
-		// Create default user
+		// Create default topic
 		PreparedStatement prep = conn
 				.prepareStatement("insert into topics (tid, name, fid) "
 						+ " values (?, ?, ?);");
@@ -126,7 +126,7 @@ public class DatabaseManager {
 		stat.executeUpdate("create table posts (pid integer primary key, "
 				+ "tid int, uid int, postedOnDate date, message text);");
 
-		// Create default user
+		// Create default post
 		PreparedStatement prep = conn
 				.prepareStatement("insert into posts (pid, tid, uid, postedOnDate, message) "
 						+ " values (?, ?, ?, ?, ?);");
@@ -215,22 +215,23 @@ public class DatabaseManager {
 		while (rs.next()) {
 			User u = new User();
 			u.setUsername(rs.getString("name"));
-			if(rs.getInt("isMod")==1){
-				u.setModeratorTights(true);
+			if (rs.getInt("isMod") == 1) {
+				u.setModeratorRights(true);
 			}
-			if(rs.getInt("isMod")==0){
-				u.setModeratorTights(false);
+			if (rs.getInt("isMod") == 0) {
+				u.setModeratorRights(false);
 			}
 			users.add(u);
 		}
 		return users.toArray(new User[0]);
 	}
-	
-	public boolean deleteUser(Connection conn, String user) throws SQLException{
-		PreparedStatement stat = conn.prepareStatement("DELETE FROM users WHERE name LIKE ?");
-		stat.setString(1, user);
+
+	public User removeUser(Connection conn, User user) throws SQLException {
+		PreparedStatement stat = conn
+				.prepareStatement("DELETE FROM users WHERE uid LIKE ?");
+		stat.setInt(1, user.getId());
 		stat.execute();
-		return true;
+		return user;
 	}
 
 	public Post[] getAllPosts(Connection conn, Topic topic) throws SQLException {
@@ -252,23 +253,7 @@ public class DatabaseManager {
 		return posts.toArray(new Post[0]);
 	}
 
-	public boolean setModerator(Connection conn, String user, Boolean isMod) throws SQLException{
-		if(isMod){
-			PreparedStatement stat = conn.prepareStatement("UPDATE users SET isMod = 1 WHERE name LIKE ?");
-			stat.setString(1, user);
-			stat.execute();
-			System.out.println("Setting admin rights in the database to true");
-		}
-		if(!isMod){
-			PreparedStatement stat = conn.prepareStatement("UPDATE users SET isMod = 0 WHERE name LIKE ?");
-			stat.setString(1, user);
-			stat.execute();
-			System.out.println("Setting admin rights in the database to false");
 
-		}
-					
-		return true;
-	}
 	public void createPost(Connection conn, Post post) throws SQLException {
 		PreparedStatement prep = conn
 				.prepareStatement("insert into posts (tid, uid, postedOnDate, message) "
@@ -279,5 +264,56 @@ public class DatabaseManager {
 		prep.setString(4, post.getMessage());
 
 		prep.execute();
+	}
+
+	public User createUser(Connection conn, User user) throws SQLException {
+		PreparedStatement prep = conn
+				.prepareStatement("insert into users (name, isAdmin, isMod) "
+						+ " values (?, ?, ?);");
+		prep.setString(1, user.getUsername());
+
+		if (user.getAdminRights())
+			prep.setInt(2, 1);
+		else
+			prep.setInt(2, 0);
+		if (user.getModeratorRights())
+			prep.setInt(3, 1);
+		else
+			prep.setInt(3, 0);
+
+		prep.execute();
+		
+		ResultSet rs = prep.getGeneratedKeys();
+		rs.next();
+		System.out.println("Du fick ID nr: " + rs.getInt(1));
+		user.setId(rs.getInt(1));
+		
+		return user;
+	}
+
+	public User editUser(Connection conn, User user)
+			throws SQLException {
+		PreparedStatement prep = conn
+		.prepareStatement("UPDATE users SET name = ?, isAdmin = ?, isMod = ? WHERE uid = ?");
+		prep.setString(1, user.getUsername());
+		System.out.println("modrights : " +user.getModeratorRights());
+
+		if(user.getAdminRights())
+			prep.setInt(2, 1);
+		else
+			prep.setInt(2,0);
+		if(user.getModeratorRights()){
+			prep.setInt(3,1);
+			System.out.println("ISMOD SATTES TILL TRUE; YO");
+		}
+		else
+			prep.setInt(3,0);
+		System.out.println(user.getId());
+		prep.setInt(4,user.getId());
+		
+		prep.execute();
+		
+		return user;
+
 	}
 }

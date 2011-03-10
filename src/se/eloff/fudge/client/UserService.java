@@ -1,6 +1,7 @@
 package se.eloff.fudge.client;
 
-import se.eloff.fudge.client.bean.Forum;
+import java.util.Map;
+
 import se.eloff.fudge.client.bean.User;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -9,8 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("user")
 public interface UserService extends RemoteService {
 	User[] getAllUsers();
-	boolean createUser(User user);
-	boolean removeUser(String user);
-	boolean editUser(User user);
-	boolean setModerator(String user, Boolean isMod);
+	User createUser(User user);
+	User removeUser(User user);
+	User editUser(User user);
 }
