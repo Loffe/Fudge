@@ -42,7 +42,6 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 		
 		passwordItem.addKeyPressHandler(new KeyPressHandler() {
 			public void onKeyPress(KeyPressEvent event) {
-				System.out.println("HEJ");
 				String a = event.getKeyName();
 				if (event.getKeyName().equals("Enter")) {
 					onClick(null);
