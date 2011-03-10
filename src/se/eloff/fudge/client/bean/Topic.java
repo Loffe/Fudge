@@ -4,11 +4,16 @@ import java.io.Serializable;
 
 public class Topic implements Serializable {
 	private static final long serialVersionUID = -8607386776696445688L;
-	
+
 	private int id;
 	private int forumId;
 	private String name;
-	private String post;
+
+	/**
+	 * Post is not saved in the topics table. This member is used when joining
+	 * with the first post in the topic.
+	 */
+	private Post post;
 
 	public Topic() {
 	}
@@ -37,11 +42,14 @@ public class Topic implements Serializable {
 		return forumId;
 	}
 
-	public void setPost(String post) {
+	public void setPost(Post post) {
 		this.post = post;
 	}
 
-	public String getPost() {
+	/**
+	 * @return the first post's message in the topic.
+	 */
+	public Post getPost() {
 		return post;
 	}
 }

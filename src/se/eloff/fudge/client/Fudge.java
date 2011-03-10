@@ -13,6 +13,8 @@ import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
@@ -56,17 +58,23 @@ public class Fudge implements EntryPoint {
 
 	private TopicCanvas topic;
 
+	private HLayout topMenu;
+
+	private VLayout mainLayout;
+
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
 		bus = new SimpleEventBus();
 
+		initLayout();
+
 		getLoginService().getLoggedInUser(new AsyncCallback<User>() {
 
 			public void onSuccess(User user) {
 				if (user == null) {
-					initLogin();
+					initLoginComponents();
 				} else {
 					createComponents(user);
 					createButtons();
@@ -80,14 +88,25 @@ public class Fudge implements EntryPoint {
 		});
 	}
 
-	private void initLogin() {
+	protected void initLayout() {
+		mainLayout = new VLayout();
+		mainLayout.setHeight100();
+		mainLayout.setWidth100();
+		topMenu = new HLayout();
+		topMenu.setHeight(40);
+		mainLayout.addMember(topMenu);
+
+		RootPanel.get("content").add(mainLayout);
+	}
+
+	private void initLoginComponents() {
 
 		final Button showLoginDialogButton = new Button("Login");
 
 		// We can add style names to widgets
 		showLoginDialogButton.setStyleName("showLoginDialogButton");
 
-		RootPanel.get("topMenu").add(showLoginDialogButton);
+		topMenu.addMember(showLoginDialogButton);
 
 		// Create the popup dialog box
 		final Window dialogBox = new Window();
@@ -116,16 +135,8 @@ public class Fudge implements EntryPoint {
 						showLoginDialogButton.clear();
 						createButtons();
 					}
-
 				});
-		
-		
-
-		
 	}
-
-
-
 	
 	protected void createButtons() {
 		//CREATE LOGOUT BUTTON **********************'
@@ -148,7 +159,7 @@ public class Fudge implements EntryPoint {
 
 			}
 		});	
-		RootPanel.get("topMenu").add(logoutButton);
+		topMenu.addMember(logoutButton);
 		
 		//CREATE ADMINBUTTON *******************
 		final Button adminButton = new Button("Admin");
@@ -168,7 +179,7 @@ public class Fudge implements EntryPoint {
 				adminScreen.focus();
 			}
 		});	
-		RootPanel.get("topMenu").add(adminButton);
+		topMenu.addMember(adminButton);
 	}
 
 	private LoginServiceAsync getLoginService() {
@@ -181,9 +192,6 @@ public class Fudge implements EntryPoint {
 	private void createComponents(User user) {
 		dashboard = new Dashboard(user);
 		dashboard.hide();
-		
-		
-
 
 		index = new IndexCanvas(bus);
 		forum = new ForumCanvas(bus);
@@ -203,7 +211,7 @@ public class Fudge implements EntryPoint {
 			public void onShow(TopicEvent topicEvent) {
 				Topic t = topicEvent.getTopic();
 				System.out.println("Gonna show topic " + t.getId() + " in forum " + t.getForumId());
-				topic.showTopic(t);
+				topic.showItem(t);
 				tabSet.selectTab(topicTab);
 			}
 		});
@@ -219,14 +227,14 @@ public class Fudge implements EntryPoint {
 		topicTab.setPane(topic);
 
 		tabSet = new TabSet();
-		tabSet.setWidth("80%");
-		tabSet.setHeight100();
+		tabSet.setWidth100();
+		tabSet.setHeight("*");
 
 		tabSet.addTab(indexTab);
 		tabSet.addTab(forumTab);
 		tabSet.addTab(topicTab);
 		
-		RootPanel.get("content").add(tabSet);
+		mainLayout.addMember(tabSet);
 	}
 
 	private native void reload() /*-{

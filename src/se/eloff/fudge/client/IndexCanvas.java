@@ -53,7 +53,9 @@ public class IndexCanvas extends VStack {
 		for (Forum f : forums) {
 			this.addMember(createForumItem(f));
 		}
-		//this.draw();
+		// Hack to force redraw on first page load
+		this.resizeBy(1, 0);
+		this.resizeBy(-1, 0);
 
 	}
 
