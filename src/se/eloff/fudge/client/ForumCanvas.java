@@ -70,7 +70,7 @@ public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 		});
 
 		vstack.addMember(topiclabel);
-		vstack.addMember(new Label(topic.getPost()));
+		vstack.addMember(new Label(topic.getPost().getMessage()));
 
 		hstack.addMember(vstack);
 		// hstack.addMember(new Label(String.valueOf(topic.getNrOfTopics())));
@@ -124,6 +124,7 @@ public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 				appendItem(result);
 				editor.setMessage("");
 				editor.setTitle("");
+				getCreateTopicDialog().hide();
 			}
 
 			@Override

@@ -13,7 +13,7 @@ public class Topic implements Serializable {
 	 * Post is not saved in the topics table. This member is used when joining
 	 * with the first post in the topic.
 	 */
-	private String post;
+	private Post post;
 
 	public Topic() {
 	}
@@ -42,14 +42,14 @@ public class Topic implements Serializable {
 		return forumId;
 	}
 
-	public void setPost(String post) {
+	public void setPost(Post post) {
 		this.post = post;
 	}
 
 	/**
 	 * @return the first post's message in the topic.
 	 */
-	public String getPost() {
+	public Post getPost() {
 		return post;
 	}
 }

@@ -191,9 +191,11 @@ public class DatabaseManager {
 	public Topic[] getAllTopics(Connection conn, Forum forum)
 			throws SQLException {
 		PreparedStatement stat = conn
-				.prepareStatement("select tid, name,"
-						+ "(select message from posts where posts.tid = topics.tid order by postedOnDate asc limit 1) as message "
-						+ "from topics where fid = ?");
+		.prepareStatement("select fid, t.tid, t.name, p.pid, p.message, p.postedOnDate from topics as t " +
+				"inner join " +
+				"(select tid, pid, message, postedOnDate, min(pid) from posts group by tid) as p " +
+				"on t.tid = p.tid " +
+				"where fid = ?;");
 		stat.setInt(1, forum.getId());
 		ResultSet rs = stat.executeQuery();
 		ArrayList<Topic> topics = new ArrayList<Topic>();
@@ -202,7 +204,13 @@ public class DatabaseManager {
 			t.setId(rs.getInt("tid"));
 			t.setName(rs.getString("name"));
 			t.setForumId(forum.getId());
-			t.setPost(rs.getString("message"));
+
+			Post post = new Post();
+			post.setId(rs.getInt("pid"));
+			post.setMessage(rs.getString("message"));
+			post.setPostedOnDate(rs.getDate("postedOnDate"));
+
+			t.setPost(post);
 			topics.add(t);
 		}
 		return topics.toArray(new Topic[0]);
@@ -295,7 +303,7 @@ public class DatabaseManager {
 		createPost(conn, post);
 
 		topic.setId(tid);
-		topic.setPost(post.getMessage());
+		topic.setPost(post);
 
 		return topic;
 	}
