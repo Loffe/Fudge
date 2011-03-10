@@ -5,7 +5,6 @@ import se.eloff.fudge.client.bean.Topic;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
@@ -14,14 +13,13 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
-public class ForumCanvas extends VStack {
+public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 
 	private TopicServiceAsync svc;
 	private final EventBus bus;
 
 	public ForumCanvas(EventBus bus) {
 		this.bus = bus;
-		this.setWidth("80%");
 	}
 
 	private TopicServiceAsync getService() {
@@ -32,32 +30,12 @@ public class ForumCanvas extends VStack {
 	}
 
 	public void showForum(Forum forum) {
-		AsyncCallback<Topic[]> callback = new AsyncCallback<Topic[]>() {
-
-			public void onFailure(Throwable caught) {
-				System.out.println("Failed to get topics!");
-			}
-
-			public void onSuccess(Topic[] result) {
-				System.out.println("Successfully got topics");
-				updateList(result);
-			}
-		};
-		getService().getAllTopics(forum, callback);
+		super.showItem(forum);
+		getService().getAllTopics(forum, updateCallback);
 	}
 
-	protected void updateList(Topic[] topics) {
-		for (Canvas m : this.getMembers()) {
-			this.removeMember(m);
-		}
-		System.out.println("update list of topics " + topics.length);
-
-		for (Topic t : topics) {
-			this.addMember(createTopicItem(t));
-		}
-	}
-
-	protected Canvas createTopicItem(final Topic topic) {
+	@Override
+	protected Canvas createItem(final Topic topic) {
 		HStack hstack = new HStack();
 		hstack.setShowEdges(true);
 		hstack.setStyleName("topic");
