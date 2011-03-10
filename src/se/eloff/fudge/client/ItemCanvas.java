@@ -2,8 +2,7 @@ package se.eloff.fudge.client;
 
 import java.util.ArrayList;
 
-import se.eloff.fudge.client.bean.Post;
-
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.VStack;
@@ -29,13 +28,14 @@ public abstract class ItemCanvas<ContainerType, ItemType> extends VStack {
 			updateList(result);
 		}
 	};
-	
-	public ItemCanvas() {
+	protected final EventBus bus;
+
+	public ItemCanvas(EventBus bus) {
+		this.bus = bus;
 		currentItems = new ArrayList<ItemType>();
 		itemCanvas = new VStack();
 		this.addMember(itemCanvas);
 	}
-	
 
 	void showItem(ContainerType container) {
 		currentContainer = container;
@@ -44,7 +44,7 @@ public abstract class ItemCanvas<ContainerType, ItemType> extends VStack {
 	protected void updateList(ItemType[] items) {
 		itemCanvas.setAnimateMembers(false);
 		itemCanvas.removeMembers(itemCanvas.getMembers());
-		
+
 		System.out.println("update list of items: " + items.length);
 
 		for (ItemType item : items) {
@@ -52,14 +52,14 @@ public abstract class ItemCanvas<ContainerType, ItemType> extends VStack {
 		}
 
 	}
-	
+
 	protected void appendItem(ItemType item) {
 		itemCanvas.setAnimateMembers(true);
 		int position = currentItems.size();
 		currentItems.add(item);
 		itemCanvas.addMember(createItem(item), position);
 	}
-	
+
 	protected abstract Canvas createItem(ItemType item);
 
 }

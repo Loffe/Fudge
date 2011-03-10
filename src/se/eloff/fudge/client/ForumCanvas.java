@@ -16,10 +16,9 @@ import com.smartgwt.client.widgets.layout.VStack;
 public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 
 	private TopicServiceAsync svc;
-	private final EventBus bus;
 
 	public ForumCanvas(EventBus bus) {
-		this.bus = bus;
+		super(bus);
 	}
 
 	private TopicServiceAsync getService() {

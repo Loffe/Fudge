@@ -17,13 +17,12 @@ import com.smartgwt.client.widgets.layout.VLayout;
 public class TopicCanvas extends ItemCanvas<Topic, Post> {
 
 	private PostServiceAsync svc;
-	private final EventBus bus;
 	private PostEditor postEditor;
 
 	public TopicCanvas(EventBus bus) {
-		this.bus = bus;
+		super(bus);
 		this.setWidth("80%");
-		
+
 		postEditor = new PostEditor() {
 			@Override
 			protected void onSubmit() {
@@ -39,7 +38,7 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 		}
 		return svc;
 	}
-	
+
 	@Override
 	void showItem(Topic topic) {
 		super.showItem(topic);
@@ -52,17 +51,17 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 		post.setTopicId(currentContainer.getId());
 		post.setCurrentTime();
 		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-			
+
 			@Override
 			public void onSuccess(Boolean result) {
 				appendItem(post);
 				postEditor.setMessage("");
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
 		getService().createPost(post, callback);
@@ -75,34 +74,36 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 		hstack.setWidth100();
 		hstack.setAutoHeight();
 		hstack.setStyleName("post");
-		
+
 		Layout vstack = new VLayout();
 
-		DateTimeFormat formatter = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
-		Canvas dateLabel = new HTMLFlow(formatter.format(post.getPostedOnDate()));
+		DateTimeFormat formatter = DateTimeFormat
+				.getFormat("yyyy-MM-dd HH:mm:ss");
+		Canvas dateLabel = new HTMLFlow(formatter
+				.format(post.getPostedOnDate()));
 		dateLabel.setStyleName("date");
-		
+
 		Canvas message = new HTMLFlow(post.getMessage());
 		message.setStyleName("message");
-		
+
 		Layout userStack = new VLayout();
 		userStack.setWidth(100);
 		userStack.setStyleName("user");
-		
+
 		// TODO: add user name and email to post
 		Canvas userLabel = new HTMLFlow(String.valueOf(post.getUserId()));
-		
+
 		// TODO: create hash from user email
 		String hash = "475e55fc4e351736ee34946621bedd80";
 		String url = "http://www.gravatar.com/avatar/" + hash + ".png";
 		Canvas gravatar = new Img(url, 80, 80);
 
-		vstack.addMember(dateLabel);		
+		vstack.addMember(dateLabel);
 		vstack.addMember(message);
-		
+
 		userStack.addMember(userLabel);
 		userStack.addMember(gravatar);
-		
+
 		hstack.addMember(vstack);
 		hstack.addMember(userStack);
 
