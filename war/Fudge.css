@@ -1,5 +1,10 @@
 /** Add css rules here for your application. */
 
+body {
+	margin: 0;
+	padding: 0;
+}
+
 #header {
 	background: #eee;
 	width: 80%;
