@@ -211,7 +211,7 @@ public class Fudge implements EntryPoint {
 			public void onShow(TopicEvent topicEvent) {
 				Topic t = topicEvent.getTopic();
 				System.out.println("Gonna show topic " + t.getId() + " in forum " + t.getForumId());
-				topic.showTopic(t);
+				topic.showItem(t);
 				tabSet.selectTab(topicTab);
 			}
 		});

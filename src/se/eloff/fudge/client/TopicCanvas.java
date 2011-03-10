@@ -1,7 +1,5 @@
 package se.eloff.fudge.client;
 
-import java.util.ArrayList;
-
 import se.eloff.fudge.client.bean.Post;
 import se.eloff.fudge.client.bean.Topic;
 
@@ -12,64 +10,19 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Img;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.layout.VStack;
 
-public class TopicCanvas extends VStack {
+public class TopicCanvas extends ItemCanvas<Topic, Post> {
 
 	private PostServiceAsync svc;
 	private final EventBus bus;
 	private PostEditor postEditor;
-	protected Topic currentTopic;
-	protected ArrayList<Post> currentPosts;
 
 	public TopicCanvas(EventBus bus) {
 		this.bus = bus;
 		this.setWidth("80%");
-		
-		currentPosts = new ArrayList<Post>();
-	}
-
-	private PostServiceAsync getService() {
-		if (svc == null) {
-			svc = (PostServiceAsync) GWT.create(PostService.class);
-		}
-		return svc;
-	}
-
-	public void showTopic(Topic topic) {
-		currentTopic = topic;
-		AsyncCallback<Post[]> callback = new AsyncCallback<Post[]>() {
-
-			public void onFailure(Throwable caught) {
-				System.out.println("Failed to get posts!");
-			}
-
-			public void onSuccess(Post[] result) {
-				System.out.println("Successfully got posts");
-				currentPosts.clear();
-				for (Post p : result) {
-					currentPosts.add(p);
-				}
-				updateList(result);
-			}
-		};
-		getService().getAllPosts(topic, callback);
-	}
-
-	protected void updateList(Post[] posts) {
-		TopicCanvas.this.setAnimateMembers(false);
-		for (Canvas m : this.getMembers()) {
-			this.removeMember(m);
-		}
-		System.out.println("update list of posts " + posts.length);
-
-		for (Post p : posts) {
-			this.addMember(createPostItem(p));
-		}
 		
 		postEditor = new PostEditor() {
 			@Override
@@ -80,19 +33,29 @@ public class TopicCanvas extends VStack {
 		this.addMember(postEditor);
 	}
 
+	private PostServiceAsync getService() {
+		if (svc == null) {
+			svc = (PostServiceAsync) GWT.create(PostService.class);
+		}
+		return svc;
+	}
+	
+	@Override
+	void showItem(Topic topic) {
+		super.showItem(topic);
+		getService().getAllPosts(topic, updateCallback);
+	}
+
 	protected void submitPost() {
 		final Post post = new Post();
 		post.setMessage(postEditor.getMessage());
-		post.setTopicId(currentTopic.getId());
+		post.setTopicId(currentContainer.getId());
 		post.setCurrentTime();
 		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 			
 			@Override
 			public void onSuccess(Boolean result) {
-				int position = currentPosts.size();
-				TopicCanvas.this.setAnimateMembers(true);
-				TopicCanvas.this.addMember(createPostItem(post), position);
-				currentPosts.add(post);
+				appendItem(post);
 				postEditor.setMessage("");
 			}
 			
@@ -105,7 +68,7 @@ public class TopicCanvas extends VStack {
 		getService().createPost(post, callback);
 	}
 
-	protected Canvas createPostItem(final Post post) {
+	protected Canvas createItem(final Post post) {
 		Layout hstack = new HLayout();
 		hstack.setPadding(5);
 		hstack.setShowEdges(true);
