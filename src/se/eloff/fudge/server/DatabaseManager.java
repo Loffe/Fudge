@@ -260,7 +260,6 @@ public class DatabaseManager {
 		return posts.toArray(new Post[0]);
 	}
 
-
 	public void createPost(Connection conn, Post post) throws SQLException {
 		PreparedStatement prep = conn
 				.prepareStatement("insert into posts (tid, uid, postedOnDate, message) "
@@ -289,42 +288,42 @@ public class DatabaseManager {
 			prep.setInt(3, 0);
 
 		prep.execute();
-		
+
 		ResultSet rs = prep.getGeneratedKeys();
 		rs.next();
 		System.out.println("Du fick ID nr: " + rs.getInt(1));
 		user.setId(rs.getInt(1));
-		
+
 		return user;
 	}
 
-	public User editUser(Connection conn, User user)
-			throws SQLException {
+	public User editUser(Connection conn, User user) throws SQLException {
 		PreparedStatement prep = conn
-		.prepareStatement("UPDATE users SET name = ?, isAdmin = ?, isMod = ? WHERE uid = ?");
+				.prepareStatement("UPDATE users SET name = ?, isAdmin = ?, isMod = ? WHERE uid = ?");
 		prep.setString(1, user.getUsername());
-		System.out.println("modrights : " +user.getModeratorRights());
+		System.out.println("modrights : " + user.getModeratorRights());
 
-		if(user.getAdminRights())
+		if (user.getAdminRights())
 			prep.setInt(2, 1);
 		else
-			prep.setInt(2,0);
-		if(user.getModeratorRights()){
-			prep.setInt(3,1);
+			prep.setInt(2, 0);
+		if (user.getModeratorRights()) {
+			prep.setInt(3, 1);
 			System.out.println("ISMOD SATTES TILL TRUE; YO");
-		}
-		else
-			prep.setInt(3,0);
+		} else
+			prep.setInt(3, 0);
 		System.out.println(user.getId());
-		prep.setInt(4,user.getId());
-		
+		prep.setInt(4, user.getId());
+
 		prep.execute();
-		
+
 		return user;
 	}
 
-	public Topic createTopic(Connection conn, Topic topic, Post post) throws SQLException {
-		PreparedStatement prep = conn.prepareStatement("insert into topics (fid, name) values (?, ?)");
+	public Topic createTopic(Connection conn, Topic topic, Post post)
+			throws SQLException {
+		PreparedStatement prep = conn
+				.prepareStatement("insert into topics (fid, name) values (?, ?)");
 		prep.setInt(1, topic.getForumId());
 		prep.setString(2, topic.getName());
 		prep.execute();
