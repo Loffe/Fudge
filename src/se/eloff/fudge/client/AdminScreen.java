@@ -48,8 +48,14 @@ public class AdminScreen extends Canvas {
 					newUser
 							.setUsername(record
 									.getAttributeAsString("userName"));
+					newUser.setPassword(record
+							.getAttributeAsString("password"));
 					newUser.setModeratorRights(record
 							.getAttributeAsBoolean("isMod"));
+					newUser.setAdminRights(record
+							.getAttributeAsBoolean("isAdmin"));
+					newUser.setEmail(record
+							.getAttributeAsString("email"));
 
 					AsyncCallback<User> callback = new AsyncCallback<User>() {
 
@@ -60,7 +66,8 @@ public class AdminScreen extends Canvas {
 						public void onSuccess(User result) {
 							System.out.println("success in creating new user");
 							record.setAttribute("userObject", result);
-							System.out.println("object created, id set to: " + result.getId());
+							System.out.println("object created, id set to: "
+									+ result.getId());
 
 						}
 					};
@@ -79,23 +86,19 @@ public class AdminScreen extends Canvas {
 						public void onSuccess(User result) {
 							System.out.println("success in editing user");
 							record.setAttribute("userObject", result);
-							System.out.println("EFTER: "+result.getId());
+							System.out.println("EFTER: " + result.getId());
 						}
 					};
 					user.setModeratorRights(record
 							.getAttributeAsBoolean("isMod"));
-					for (String attr : record.getAttributes()) {
-						System.out.println(attr + " = "
-								+ record.getAttribute(attr));
-					}
-					System.out.println("upptäckte att recordets modrights är "
-							+ record.getAttributeAsBoolean("isMod"));
 					user.setUsername(record.getAttributeAsString("userName"));
-					System.out.println("FÖRE: "+user.getId());
+					user.setAdminRights(record
+							.getAttributeAsBoolean("isAdmin"));
+					user.setPassword(record.getAttributeAsString("password"));
+					user.setEmail(record.getAttributeAsString("email"));
 
 					getService().editUser(user, callback);
 				}
-
 
 				System.out.println("removefield: "
 						+ record.getAttributeAsBoolean("removeField"));
@@ -108,7 +111,7 @@ public class AdminScreen extends Canvas {
 
 					public void onSuccess(User result) {
 						System.out.println("success in removing user");
-						
+
 					}
 				};
 				if (record.getAttributeAsBoolean("removeField") == true) {
@@ -124,12 +127,21 @@ public class AdminScreen extends Canvas {
 		moderatorField.setAlign(Alignment.CENTER);
 		moderatorField.setType(ListGridFieldType.BOOLEAN);
 
+		ListGridField adminField = new ListGridField("isAdmin", "Admin?");
+		adminField.setAlign(Alignment.CENTER);
+		adminField.setType(ListGridFieldType.BOOLEAN);
+
 		ListGridField removeField = new ListGridField("removeField",
 				"Remove User?");
 		removeField.setAlign(Alignment.CENTER);
 		removeField.setType(ListGridFieldType.BOOLEAN);
 
-		userGrid.setFields(nameField, moderatorField, removeField);
+		ListGridField emailField = new ListGridField("email", "email");
+
+		ListGridField passwordField = new ListGridField("password", "password");
+
+		userGrid.setFields(nameField, passwordField, emailField,
+				moderatorField, adminField, removeField);
 
 		VLayout vl = new VLayout();
 		vl.addMember(userGrid);
@@ -145,14 +157,13 @@ public class AdminScreen extends Canvas {
 
 			}
 		});
-	
+
 		Button updateButton = new Button("Update");
 		hl.addMember(updateButton);
 		updateButton.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
 				populateTable();
-				
 
 			}
 		});
@@ -182,7 +193,7 @@ public class AdminScreen extends Canvas {
 			public void onSuccess(User[] result) {
 				for (ListGridRecord r : userGrid.getRecords())
 					userGrid.removeData(r);
-					
+
 				System.out.println("Successfully got users");
 
 				for (int i = 0; i < result.length; i++) {
@@ -191,6 +202,9 @@ public class AdminScreen extends Canvas {
 					rec.setAttribute("isMod", result[i].getModeratorRights());
 					rec.setAttribute("id", result[i].getId());
 					rec.setAttribute("userObject", result[i]);
+					rec.setAttribute("email", result[i].getEmail());
+					rec.setAttribute("password", result[i].getPassword());
+					rec.setAttribute("isAdmin", result[i].getAdminRights());
 					userGrid.addData(rec);
 
 				}
