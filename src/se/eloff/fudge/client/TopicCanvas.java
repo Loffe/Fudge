@@ -2,6 +2,7 @@ package se.eloff.fudge.client;
 
 import se.eloff.fudge.client.bean.Post;
 import se.eloff.fudge.client.bean.Topic;
+import se.eloff.fudge.client.bean.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -92,6 +93,10 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 
 		// TODO: add user name and email to post
 		Canvas userLabel = new HTMLFlow(String.valueOf(post.getUserId()));
+		User user = post.getUser();
+		if (user != null) {
+			userLabel = new HTMLFlow(user.getUsername());
+		}
 
 		// TODO: create hash from user email
 		String hash = "475e55fc4e351736ee34946621bedd80";

@@ -269,7 +269,7 @@ public class DatabaseManager {
 	public Post[] getAllPosts(Connection conn, Topic topic) throws SQLException {
 		PreparedStatement stat = conn
 				.prepareStatement("select pid, tid, posts.uid, postedOnDate, message, " +
-						"users.name " +
+						"users.name, users.email " +
 						"from posts " +
 						"left join users on posts.uid = users.uid " +
 						"where tid = ?");
@@ -284,6 +284,13 @@ public class DatabaseManager {
 			p.setUserId(rs.getInt("uid"));
 			p.setPostedOnDate(rs.getDate("postedOnDate"));
 			p.setMessage(rs.getString("message"));
+
+			User user = new User();
+			user.setId(rs.getInt("uid"));
+			user.setUsername(rs.getString("name"));
+			user.setEmail(rs.getString("email"));
+			p.setUser(user);
+
 			posts.add(p);
 		}
 		return posts.toArray(new Post[0]);
