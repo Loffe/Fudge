@@ -218,10 +218,11 @@ public class DatabaseManager {
 
 	public User[] getAllUsers(Connection conn) throws SQLException {
 		Statement stat = conn.createStatement();
-		ResultSet rs = stat.executeQuery("select name, isMod from users");
+		ResultSet rs = stat.executeQuery("select uid, name, isMod from users");
 		ArrayList<User> users = new ArrayList<User>();
 		while (rs.next()) {
 			User u = new User();
+			u.setId(rs.getInt("uid"));
 			u.setUsername(rs.getString("name"));
 			if (rs.getInt("isMod") == 1) {
 				u.setModeratorRights(true);

@@ -16,6 +16,7 @@ import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.EditCompleteEvent;
 import com.smartgwt.client.widgets.grid.events.EditCompleteHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class AdminScreen extends Canvas {
@@ -59,6 +60,7 @@ public class AdminScreen extends Canvas {
 						public void onSuccess(User result) {
 							System.out.println("success in creating new user");
 							record.setAttribute("userObject", result);
+							System.out.println("object created, id set to: " + result.getId());
 
 						}
 					};
@@ -77,6 +79,7 @@ public class AdminScreen extends Canvas {
 						public void onSuccess(User result) {
 							System.out.println("success in editing user");
 							record.setAttribute("userObject", result);
+							System.out.println("EFTER: "+result.getId());
 						}
 					};
 					user.setModeratorRights(record
@@ -88,11 +91,11 @@ public class AdminScreen extends Canvas {
 					System.out.println("upptäckte att recordets modrights är "
 							+ record.getAttributeAsBoolean("isMod"));
 					user.setUsername(record.getAttributeAsString("userName"));
+					System.out.println("FÖRE: "+user.getId());
+
 					getService().editUser(user, callback);
 				}
 
-				// FEL HÄR EXPECTED INT OFTAST NULL POINTER INNNAN OCKSÅ OM MAN
-				// INTE KLICKAR I OCH KLICKAR UR
 
 				System.out.println("removefield: "
 						+ record.getAttributeAsBoolean("removeField"));
@@ -105,7 +108,8 @@ public class AdminScreen extends Canvas {
 
 					public void onSuccess(User result) {
 						System.out.println("success in removing user");
-						userGrid.removeData(record);
+						//populateTable();
+						
 					}
 				};
 				if (record.getAttributeAsBoolean("removeField") == true) {
@@ -130,13 +134,26 @@ public class AdminScreen extends Canvas {
 
 		VLayout vl = new VLayout();
 		vl.addMember(userGrid);
-		Button saveButton = new Button("Update changes");
-		vl.addMember(saveButton);
+		HLayout hl = new HLayout();
+		vl.addMember(hl);
+		Button saveButton = new Button("Add another user");
+		hl.addMember(saveButton);
 		saveButton.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
 				ListGridRecord defaultRecordValue = new ListGridRecord();
 				userGrid.startEditingNew(defaultRecordValue);
+
+			}
+		});
+	
+		Button updateButton = new Button("Update");
+		hl.addMember(updateButton);
+		updateButton.addClickHandler(new ClickHandler() {
+
+			public void onClick(ClickEvent event) {
+				populateTable();
+				
 
 			}
 		});
@@ -164,6 +181,9 @@ public class AdminScreen extends Canvas {
 			}
 
 			public void onSuccess(User[] result) {
+				for (ListGridRecord r : userGrid.getRecords())
+					userGrid.removeData(r);
+					
 				System.out.println("Successfully got users");
 
 				for (int i = 0; i < result.length; i++) {
