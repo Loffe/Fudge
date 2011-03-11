@@ -12,7 +12,12 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
-public class IndexCanvas extends ItemCanvas<Forum, Forum> {
+public class IndexCanvas extends ItemCanvas<IndexCanvas.Index, Forum> {
+	/**
+	 * Dummy used as container for forums. Never instantiated since there
+	 * is only one index.
+	 */
+	interface Index{}
 
 	private ForumServiceAsync svc;
 
@@ -30,7 +35,7 @@ public class IndexCanvas extends ItemCanvas<Forum, Forum> {
 	}
 
 	@Override
-	public void showItem(Forum forum) {
+	public void showItem(Index index) {
 		super.showItem(null);
 		getService().getAllForums(updateCallback);
 	}
