@@ -2,6 +2,8 @@ package se.eloff.fudge.client;
 
 import java.util.ArrayList;
 
+import se.eloff.fudge.client.bean.User;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Canvas;
@@ -11,6 +13,7 @@ public abstract class ItemCanvas<ContainerType, ItemType> extends VStack {
 	protected ContainerType currentContainer;
 	protected ArrayList<ItemType> currentItems;
 	protected VStack itemCanvas;
+	protected User user;
 
 	AsyncCallback<ItemType[]> updateCallback = new AsyncCallback<ItemType[]>() {
 		@Override
@@ -35,6 +38,10 @@ public abstract class ItemCanvas<ContainerType, ItemType> extends VStack {
 		currentItems = new ArrayList<ItemType>();
 		itemCanvas = new VStack();
 		this.addMember(itemCanvas);
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	void showItem(ContainerType container) {
