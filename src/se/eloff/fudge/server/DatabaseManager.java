@@ -191,11 +191,10 @@ public class DatabaseManager {
 	public Topic[] getAllTopics(Connection conn, Forum forum)
 			throws SQLException {
 		PreparedStatement stat = conn
-		.prepareStatement("select fid, t.tid, t.name, p.pid, p.message, p.postedOnDate from topics as t " +
-				"inner join " +
-				"(select tid, pid, message, postedOnDate, min(pid) from posts group by tid) as p " +
-				"on t.tid = p.tid " +
-				"where fid = ?;");
+				.prepareStatement("select fid, t.tid, t.name, p.pid, p.message, p.postedOnDate "
+						+ "from topics t "
+						+ "left join posts p on t.tid = p.tid "
+						+ "where p.pid = (select min(pid) from posts where tid = t.tid) and t.fid = ?");
 		stat.setInt(1, forum.getId());
 		ResultSet rs = stat.executeQuery();
 		ArrayList<Topic> topics = new ArrayList<Topic>();
