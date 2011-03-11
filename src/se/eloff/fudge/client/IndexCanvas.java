@@ -4,7 +4,6 @@ import se.eloff.fudge.client.bean.Forum;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
@@ -13,15 +12,14 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
-public class IndexCanvas extends VStack {
+public class IndexCanvas extends ItemCanvas<Forum, Forum> {
 
 	private ForumServiceAsync svc;
-	private final EventBus bus;
 
 	public IndexCanvas(EventBus bus) {
-		this.bus = bus;
+		super(bus);
 		this.setWidth("80%");
-		refresh();
+		showItem(null);
 	}
 
 	private ForumServiceAsync getService() {
@@ -31,35 +29,23 @@ public class IndexCanvas extends VStack {
 		return svc;
 	}
 
-	protected void refresh() {
-		AsyncCallback<Forum[]> callback = new AsyncCallback<Forum[]>() {
-
-			public void onFailure(Throwable caught) {
-				System.out.println("Failed to get forums!");
-			}
-
-			public void onSuccess(Forum[] result) {
-				System.out.println("Successfully got forums");
-				updateList(result);
-			}
-		};
-		getService().getAllForums(callback);
+	@Override
+	public void showItem(Forum forum) {
+		super.showItem(null);
+		getService().getAllForums(updateCallback);
 	}
 
+	@Override
 	protected void updateList(Forum[] forums) {
-		this.clear();
-		System.out.println("update list" + forums.length);
-
-		for (Forum f : forums) {
-			this.addMember(createForumItem(f));
-		}
+		super.updateList(forums);
 		// Hack to force redraw on first page load
 		this.resizeBy(1, 0);
 		this.resizeBy(-1, 0);
 
 	}
 
-	protected Canvas createForumItem(final Forum forum) {
+	@Override
+	protected Canvas createItem(final Forum forum) {
 		HStack hstack = new HStack();
 		hstack.setStyleName("forum");
 		hstack.setWidth("80%");
