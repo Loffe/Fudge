@@ -44,7 +44,8 @@ public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 		return svc;
 	}
 
-	public void showForum(Forum forum) {
+	@Override
+	public void showItem(Forum forum) {
 		super.showItem(forum);
 		getService().getAllTopics(forum, updateCallback);
 	}

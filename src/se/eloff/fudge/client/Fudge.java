@@ -1,5 +1,6 @@
 package se.eloff.fudge.client;
 
+import se.eloff.fudge.client.bean.Forum;
 import se.eloff.fudge.client.bean.Topic;
 import se.eloff.fudge.client.bean.User;
 
@@ -46,17 +47,9 @@ public class Fudge implements EntryPoint {
 
 	protected IndexCanvas index;
 
-	private ForumCanvas forum;
-
 	private TabSet tabSet;
 
 	private Tab indexTab;
-
-	private Tab forumTab;
-
-	private Tab topicTab;
-
-	private TopicCanvas topic;
 
 	private HLayout topMenu;
 
@@ -194,15 +187,15 @@ public class Fudge implements EntryPoint {
 		dashboard.hide();
 
 		index = new IndexCanvas(bus);
-		forum = new ForumCanvas(bus);
-		topic = new TopicCanvas(bus);
 		bus.addHandler(ForumEvent.TYPE, new ForumEventHandler() {
 
 			public void onShow(ForumEvent forumEvent) {
 				System.out.println("Gonna show forum. "
 						+ forumEvent.getForum().getId());
-				forum.showForum(forumEvent.getForum());
-				tabSet.selectTab(forumTab);
+				Forum forum = forumEvent.getForum();
+				Tab tab = openForum(forum);
+				tabSet.addTab(tab);
+				tabSet.selectTab(tab);
 			}
 		});
 		
@@ -211,30 +204,43 @@ public class Fudge implements EntryPoint {
 			public void onShow(TopicEvent topicEvent) {
 				Topic t = topicEvent.getTopic();
 				System.out.println("Gonna show topic " + t.getId() + " in forum " + t.getForumId());
-				topic.showItem(t);
-				tabSet.selectTab(topicTab);
+				Tab tab = openTopic(t);
+				tabSet.addTab(tab);
+				tabSet.selectTab(tab);
 			}
 		});
 		
 		// index.hide();
 		
 		indexTab = new Tab("Index");
-		forumTab = new Tab("Forums");
-		topicTab = new Tab("Topic");
 		
 		indexTab.setPane(index);
-		forumTab.setPane(forum);
-		topicTab.setPane(topic);
 
 		tabSet = new TabSet();
 		tabSet.setWidth100();
 		tabSet.setHeight("*");
 
 		tabSet.addTab(indexTab);
-		tabSet.addTab(forumTab);
-		tabSet.addTab(topicTab);
 		
 		mainLayout.addMember(tabSet);
+	}
+
+	protected Tab openForum(Forum forum) {
+		Tab tab = new Tab(forum.getName());
+		tab.setCanClose(true);
+		ForumCanvas forumCanvas = new ForumCanvas(bus);
+		forumCanvas.showItem(forum);
+		tab.setPane(forumCanvas);
+		return tab;
+	}
+
+	protected Tab openTopic(Topic topic) {
+		Tab tab = new Tab(topic.getName());
+		tab.setCanClose(true);
+		TopicCanvas topicCanvas = new TopicCanvas(bus);
+		topicCanvas.showItem(topic);
+		tab.setPane(topicCanvas);
+		return tab;
 	}
 
 	private native void reload() /*-{
