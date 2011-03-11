@@ -1,5 +1,6 @@
 package se.eloff.fudge.client;
 
+import se.eloff.fudge.client.bean.Forum;
 import se.eloff.fudge.client.bean.Topic;
 import se.eloff.fudge.client.bean.User;
 
@@ -46,15 +47,9 @@ public class Fudge implements EntryPoint {
 
 	protected IndexCanvas index;
 
-	private ForumCanvas forum;
-
 	private TabSet tabSet;
 
 	private Tab indexTab;
-
-	private Tab forumTab;
-
-	private TopicCanvas topic;
 
 	private HLayout topMenu;
 
@@ -192,14 +187,15 @@ public class Fudge implements EntryPoint {
 		dashboard.hide();
 
 		index = new IndexCanvas(bus);
-		forum = new ForumCanvas(bus);
 		bus.addHandler(ForumEvent.TYPE, new ForumEventHandler() {
 
 			public void onShow(ForumEvent forumEvent) {
 				System.out.println("Gonna show forum. "
 						+ forumEvent.getForum().getId());
-				forum.showForum(forumEvent.getForum());
-				tabSet.selectTab(forumTab);
+				Forum forum = forumEvent.getForum();
+				Tab tab = openForum(forum);
+				tabSet.addTab(tab);
+				tabSet.selectTab(tab);
 			}
 		});
 		
@@ -217,19 +213,25 @@ public class Fudge implements EntryPoint {
 		// index.hide();
 		
 		indexTab = new Tab("Index");
-		forumTab = new Tab("Forums");
 		
 		indexTab.setPane(index);
-		forumTab.setPane(forum);
 
 		tabSet = new TabSet();
 		tabSet.setWidth100();
 		tabSet.setHeight("*");
 
 		tabSet.addTab(indexTab);
-		tabSet.addTab(forumTab);
 		
 		mainLayout.addMember(tabSet);
+	}
+
+	protected Tab openForum(Forum forum) {
+		Tab tab = new Tab(forum.getName());
+		tab.setCanClose(true);
+		ForumCanvas forumCanvas = new ForumCanvas(bus);
+		forumCanvas.showItem(forum);
+		tab.setPane(forumCanvas);
+		return tab;
 	}
 
 	protected Tab openTopic(Topic topic) {
