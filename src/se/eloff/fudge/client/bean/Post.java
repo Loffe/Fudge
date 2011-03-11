@@ -11,6 +11,7 @@ public class Post implements Serializable {
 	private int userId;
 	private Date postedOnDate;
 	private String message;
+	private User user;
 	
 	public Post() {
 	}
@@ -66,5 +67,13 @@ public class Post implements Serializable {
 	public void setCurrentTime() {
 		java.util.Date date = new java.util.Date();
 		setPostedOnDate(new java.sql.Date(date.getTime()));
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public User getUser() {
+		return user;
 	}
 }
