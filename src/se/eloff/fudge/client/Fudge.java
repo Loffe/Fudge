@@ -54,8 +54,6 @@ public class Fudge implements EntryPoint {
 
 	private Tab forumTab;
 
-	private Tab topicTab;
-
 	private TopicCanvas topic;
 
 	private HLayout topMenu;
@@ -195,7 +193,6 @@ public class Fudge implements EntryPoint {
 
 		index = new IndexCanvas(bus);
 		forum = new ForumCanvas(bus);
-		topic = new TopicCanvas(bus);
 		bus.addHandler(ForumEvent.TYPE, new ForumEventHandler() {
 
 			public void onShow(ForumEvent forumEvent) {
@@ -211,8 +208,9 @@ public class Fudge implements EntryPoint {
 			public void onShow(TopicEvent topicEvent) {
 				Topic t = topicEvent.getTopic();
 				System.out.println("Gonna show topic " + t.getId() + " in forum " + t.getForumId());
-				topic.showItem(t);
-				tabSet.selectTab(topicTab);
+				Tab tab = openTopic(t);
+				tabSet.addTab(tab);
+				tabSet.selectTab(tab);
 			}
 		});
 		
@@ -220,11 +218,9 @@ public class Fudge implements EntryPoint {
 		
 		indexTab = new Tab("Index");
 		forumTab = new Tab("Forums");
-		topicTab = new Tab("Topic");
 		
 		indexTab.setPane(index);
 		forumTab.setPane(forum);
-		topicTab.setPane(topic);
 
 		tabSet = new TabSet();
 		tabSet.setWidth100();
@@ -232,9 +228,17 @@ public class Fudge implements EntryPoint {
 
 		tabSet.addTab(indexTab);
 		tabSet.addTab(forumTab);
-		tabSet.addTab(topicTab);
 		
 		mainLayout.addMember(tabSet);
+	}
+
+	protected Tab openTopic(Topic topic) {
+		Tab tab = new Tab(topic.getName());
+		tab.setCanClose(true);
+		TopicCanvas topicCanvas = new TopicCanvas(bus);
+		topicCanvas.showItem(topic);
+		tab.setPane(topicCanvas);
+		return tab;
 	}
 
 	private native void reload() /*-{
