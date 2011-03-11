@@ -25,6 +25,8 @@ public abstract class ItemCanvas<ContainerType, ItemType> extends VStack {
 		public void onSuccess(ItemType[] result) {
 			System.out.println("Successfully got posts");
 			currentItems.clear();
+			if (result == null)
+				throw new NullPointerException("result should not be null");
 			for (ItemType item : result) {
 				currentItems.add(item);
 			}

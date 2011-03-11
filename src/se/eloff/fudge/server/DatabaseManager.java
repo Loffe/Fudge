@@ -151,22 +151,36 @@ public class DatabaseManager {
 	 * @param conn
 	 * @param username
 	 * @param password
-	 * @return
+	 * @return user if username and password is valid, otherwise null
 	 * @throws SQLException
 	 */
-	public boolean checkUserCredentials(Connection conn, String username,
+	public User checkUserCredentials(Connection conn, String username,
 			String password) throws SQLException {
 		PreparedStatement stat = conn
-				.prepareStatement("select * from users where name = ? and password = ?");
+				//.prepareStatement("select uid, isAdmin, isMod from users where name = ? and password = ?");
+				.prepareStatement("select uid, isMod from users where name = ? and password = ?");
 		stat.setString(1, username);
 		stat.setString(2, password);
 		ResultSet rs = stat.executeQuery();
+
+		User user = new User();
+		user.setUsername(username);
+
 		int numRows = 0;
 		while (rs.next()) {
 			++numRows;
+			user.setId(rs.getInt("uid"));
+			//user.setAdminRights(rs.getInt("isAdmin") == 1);
+			user.setModeratorRights(rs.getInt("isMod") == 1);
 		}
 		rs.close();
-		return numRows == 1;
+
+		if (numRows == 1) {
+			// user exists
+			return user;
+		} else {
+			return null;
+		}
 	}
 
 	public Forum[] getAllForums(Connection conn) throws SQLException {
@@ -244,7 +258,11 @@ public class DatabaseManager {
 
 	public Post[] getAllPosts(Connection conn, Topic topic) throws SQLException {
 		PreparedStatement stat = conn
-				.prepareStatement("select pid, tid, uid, postedOnDate, message from posts where tid = ?");
+				.prepareStatement("select pid, tid, posts.uid, postedOnDate, message, " +
+						"users.name " +
+						"from posts " +
+						"left join users on posts.uid = users.uid " +
+						"where tid = ?");
 		stat.setInt(1, topic.getId());
 		ResultSet rs = stat.executeQuery();
 
@@ -266,7 +284,7 @@ public class DatabaseManager {
 				.prepareStatement("insert into posts (tid, uid, postedOnDate, message) "
 						+ " values (?, ?, ?, ?);");
 		prep.setInt(1, post.getTopicId());
-		prep.setInt(2, post.getUserId()); // Fake user id
+		prep.setInt(2, post.getUserId());
 		prep.setDate(3, post.getPostedOnDate());
 		prep.setString(4, post.getMessage());
 

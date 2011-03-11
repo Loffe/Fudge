@@ -6,16 +6,19 @@ import java.sql.SQLException;
 import se.eloff.fudge.client.PostService;
 import se.eloff.fudge.client.bean.Post;
 import se.eloff.fudge.client.bean.Topic;
+import se.eloff.fudge.client.bean.User;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
-public class PostServiceImpl extends RemoteServiceServlet implements PostService {
+public class PostServiceImpl extends FudgeServiceServlet implements PostService {
 
 	@Override
 	public boolean createPost(Post post) {
 		System.out.println("createPost");
 		DatabaseManager database = DatabaseManager.getInstance();
 		Connection conn = database.getConnection();
+		
+		User user = getUserFromSession();
+		post.setUserId(user.getId());
+		System.out.println("createPost: I think your number is " + user.getId());
 
 		try {
 			database.createPost(conn, post);

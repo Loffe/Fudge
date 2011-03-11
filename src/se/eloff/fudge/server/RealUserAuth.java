@@ -3,11 +3,18 @@ package se.eloff.fudge.server;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class RealUserAuth  {
+import se.eloff.fudge.client.LoginException;
+import se.eloff.fudge.client.bean.User;
 
+public class RealUserAuth {
 
-
-	public boolean validateUser(String username, String password) {
+	/**
+	 * @param username
+	 * @param password
+	 * @return user if username and password is valid, otherwise null
+	 * @throws LoginException 
+	 */
+	public User validateUser(String username, String password) throws LoginException {
 		DatabaseManager db = DatabaseManager.getInstance();
 		Connection conn = db.getConnection();
 		try {
@@ -16,6 +23,6 @@ public class RealUserAuth  {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
+		throw new LoginException("Username and password does not match");
 	}
 }
