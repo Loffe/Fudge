@@ -123,13 +123,21 @@ public class AdminScreen extends Canvas {
 		ListGridField moderatorField = new ListGridField("isMod", "Moderator?");
 		moderatorField.setAlign(Alignment.CENTER);
 		moderatorField.setType(ListGridFieldType.BOOLEAN);
+		
+		ListGridField adminField = new ListGridField("isAdmin", "Admin?");
+		adminField.setAlign(Alignment.CENTER);
+		adminField.setType(ListGridFieldType.BOOLEAN);
 
 		ListGridField removeField = new ListGridField("removeField",
 				"Remove User?");
 		removeField.setAlign(Alignment.CENTER);
 		removeField.setType(ListGridFieldType.BOOLEAN);
+		
+		ListGridField emailField = new ListGridField("email", "email");
+	
+		ListGridField passwordField = new ListGridField("password", "password");
 
-		userGrid.setFields(nameField, moderatorField, removeField);
+		userGrid.setFields(nameField, passwordField, emailField, moderatorField, adminField, removeField);
 
 		VLayout vl = new VLayout();
 		vl.addMember(userGrid);
@@ -191,6 +199,9 @@ public class AdminScreen extends Canvas {
 					rec.setAttribute("isMod", result[i].getModeratorRights());
 					rec.setAttribute("id", result[i].getId());
 					rec.setAttribute("userObject", result[i]);
+					rec.setAttribute("email", result[i].getEmail());
+					rec.setAttribute("password", result[i].getPassword());
+					rec.setAttribute("isAdmin", result[i].getAdminRights());
 					userGrid.addData(rec);
 
 				}
