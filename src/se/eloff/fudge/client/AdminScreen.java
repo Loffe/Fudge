@@ -108,7 +108,6 @@ public class AdminScreen extends Canvas {
 
 					public void onSuccess(User result) {
 						System.out.println("success in removing user");
-						//populateTable();
 						
 					}
 				};
