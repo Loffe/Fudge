@@ -348,7 +348,6 @@ public class DatabaseManager {
 		PreparedStatement prep = conn
 				.prepareStatement("UPDATE users SET name = ?, isAdmin = ?, isMod = ? , password = ?, email = ? WHERE uid = ?");
 		prep.setString(1, user.getUsername());
-		System.out.println("modrights : " + user.getModeratorRights());
 
 		if (user.getAdminRights())
 			prep.setInt(2, 1);
@@ -387,6 +386,7 @@ public class DatabaseManager {
 		topic.setId(tid);
 		topic.setPost(post);
 
+
 		return topic;
 	}
 
@@ -394,6 +394,24 @@ public class DatabaseManager {
 		PreparedStatement prep = conn.prepareStatement("DELETE FROM posts WHERE pid LIKE ?");
 		System.out.println("databasemanager: trying to delete post with id: " + post.getId());
 		prep.setInt(1, post.getId());
+
+
+		prep.execute();
+
+	}
+	
+	public void deleteTopic(Connection conn, Topic topic) throws SQLException {
+		
+		//Deleting posts belonging to topic no longer present
+		PreparedStatement prep2 = conn.prepareStatement("DELETE FROM posts WHERE posts.tid = ?");
+		prep2.setInt(1, topic.getId());
+		prep2.execute();
+		
+		PreparedStatement prep = conn.prepareStatement("DELETE FROM topics WHERE tid LIKE ?");
+		System.out.println("databasemanager: trying to delete topic with id: " + topic.getId());
+		prep.setInt(1, topic.getId());
+		
+
 
 
 		prep.execute();

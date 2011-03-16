@@ -31,7 +31,6 @@ public class PostServiceImpl extends FudgeServiceServlet implements PostService 
 
 	@Override
 	public boolean deletePost(Post post) {
-		// TODO Auto-generated method stub
 		System.out.println("server side saying: about to delete post");
 		DatabaseManager database = DatabaseManager.getInstance();
 		Connection conn = database.getConnection();
@@ -39,7 +38,6 @@ public class PostServiceImpl extends FudgeServiceServlet implements PostService 
 		try {
 			database.deletePost(conn, post);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;

@@ -69,6 +69,13 @@ public abstract class ItemCanvas<ContainerType, ItemType> extends VStack {
 		itemCanvas.addMember(createItem(item), position);
 	}
 	
+	protected void deleteItem(ItemType item){
+		itemCanvas.setAnimateMembers(true);
+		int position = currentItems.indexOf(item);
+		currentItems.remove(item);
+		itemCanvas.removeMember(itemCanvas.getMember(position));
+	}
+	
 
 	protected abstract Canvas createItem(ItemType item);
 

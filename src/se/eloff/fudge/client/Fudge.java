@@ -73,7 +73,6 @@ public class Fudge implements EntryPoint {
 				} else {
 					createComponents(user);
 					createButtons();
-					Fudge.user = user;
 				}
 			}
 

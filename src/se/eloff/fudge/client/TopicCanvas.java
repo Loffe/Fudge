@@ -18,7 +18,6 @@ import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -78,10 +77,9 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 		};
 		getService().createPost(post, callback);
 	}
-	
-
 
 	protected Canvas createItem(final Post post) {
+
 		Layout hstack = new HLayout();
 		hstack.setPadding(5);
 		hstack.setShowEdges(true);
@@ -104,9 +102,9 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 		userStack.setWidth(100);
 		userStack.setStyleName("user");
 
-		// TODO: add user name and email to post
 		Canvas userLabel = new HTMLFlow(String.valueOf(post.getUserId()));
 		User user = post.getUser();
+
 		if (user != null) {
 			userLabel = new HTMLFlow(user.getUsername());
 		}
@@ -139,7 +137,7 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 
 		vstack.addMember(dateLabel);
 		vstack.addMember(message);
-		
+
 		Button deleteButton = new Button("delete");
 		deleteButton.addClickHandler(new ClickHandler() {
 
@@ -152,8 +150,7 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 						int position = currentItems.indexOf(post);
 						currentItems.remove(post);
 						itemCanvas.removeMember(itemCanvas.getMember(position));
-						//addMember(createItem(item), position);
-						
+
 						System.out.println("great succes");
 					}
 
@@ -169,8 +166,7 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 			}
 		});
 
-
-		if(Fudge.user.getModeratorRights())
+		if (Fudge.user.getModeratorRights())
 			userStack.addMember(deleteButton);
 		userStack.addMember(userLabel);
 		userStack.addMember(gravatar);

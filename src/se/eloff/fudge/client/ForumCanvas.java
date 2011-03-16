@@ -1,5 +1,7 @@
 package se.eloff.fudge.client;
 
+import org.apache.tools.ant.types.CommandlineJava.SysProperties;
+
 import se.eloff.fudge.client.bean.Forum;
 import se.eloff.fudge.client.bean.Post;
 import se.eloff.fudge.client.bean.Topic;
@@ -88,6 +90,34 @@ public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 
 		vstack.addMember(topiclabel);
 		vstack.addMember(message);
+		
+		Button deleteButton = new Button("Delete");
+		deleteButton.addClickHandler(new ClickHandler() {
+
+			public void onClick(ClickEvent event) {
+				AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+
+					@Override
+					public void onSuccess(Boolean result) {
+						deleteItem(topic);
+						
+						
+						System.out.println("great succes");
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						System.out.println("great failure");
+						// TODO Auto-generated method stub
+
+					}
+				};
+				getService().deleteTopic(topic, callback);
+
+			}
+		});
+		if(Fudge.user.getModeratorRights())
+			rightCol.addMember(deleteButton);
 
 		rightCol.addMember(dateLabel);
 		rightCol.addMember(nrOfReplies);
@@ -97,7 +127,7 @@ public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 		hstack.addMember(vstack);
 		hstack.addMember(rightCol);
 
-		hstack.addClickHandler(new ClickHandler() {
+		vstack.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
 				bus.fireEvent(new TopicEvent(topic));
@@ -146,6 +176,9 @@ public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 		Post post = new Post();
 		post.setMessage(editor.getMessage());
 		post.setCurrentTime();
+		post.setUser(Fudge.user);
+		post.setUserId(Fudge.user.getId());
+
 
 		AsyncCallback<Topic> callback = new AsyncCallback<Topic>() {
 			@Override

@@ -27,7 +27,15 @@ public class TopicServiceImpl extends RemoteServiceServlet implements
 	}
 
 	public boolean deleteTopic(Topic topic) {
-		// TODO Auto-generated method stub
+		System.out.println("server side saying: about to delete topic");
+		DatabaseManager database = DatabaseManager.getInstance();
+		Connection conn = database.getConnection();
+		
+		try {
+			database.deleteTopic(conn, topic);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
