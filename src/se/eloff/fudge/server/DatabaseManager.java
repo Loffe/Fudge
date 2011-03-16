@@ -33,8 +33,9 @@ public class DatabaseManager {
 		try {
 			System.out.println("getConnection()");
 			String filename = "fudge.db";
-			String filePath = "/" + System.getProperty("user.home")
-					+ "/workspace/Fudge/war/" + filename;
+			//String filePath = "/" + System.getProperty("user.home") + "/workspace/Fudge/war/" + filename;
+			String filePath = "C:\\Users\\Thor\\fudge.db";
+
 
 			File f = new File(filePath);
 			boolean createTable = !f.exists();
@@ -159,20 +160,29 @@ public class DatabaseManager {
 			String password) throws SQLException {
 		PreparedStatement stat = conn
 				//.prepareStatement("select uid, isAdmin, isMod from users where name = ? and password = ?");
-				.prepareStatement("select uid, isMod from users where name = ? and password = ?");
+				.prepareStatement("select uid, isMod, isAdmin, email from users where name = ? and password = ?");
 		stat.setString(1, username);
 		stat.setString(2, password);
 		ResultSet rs = stat.executeQuery();
 
 		User user = new User();
 		user.setUsername(username);
+		user.setEmail(rs.getString("email"));
+		if(rs.getInt("isAdmin") == 1)
+			user.setAdminRights(true);
+		if(rs.getInt("isAdmin") == 0)
+			user.setAdminRights(false);
+		if(rs.getInt("isMod") == 1)
+			user.setModeratorRights(true);
+		if(rs.getInt("isMod") == 0)
+			user.setModeratorRights(false);
 
 		int numRows = 0;
 		while (rs.next()) {
 			++numRows;
 			user.setId(rs.getInt("uid"));
 			//user.setAdminRights(rs.getInt("isAdmin") == 1);
-			user.setModeratorRights(rs.getInt("isMod") == 1);
+			//user.setModeratorRights(rs.getInt("isMod") == 1);
 		}
 		rs.close();
 

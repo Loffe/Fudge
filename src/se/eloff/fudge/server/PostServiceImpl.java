@@ -32,6 +32,7 @@ public class PostServiceImpl extends FudgeServiceServlet implements PostService 
 	@Override
 	public boolean deletePost(Post post) {
 		// TODO Auto-generated method stub
+		System.out.println("server side saying: about to delete post");
 		return false;
 	}
 

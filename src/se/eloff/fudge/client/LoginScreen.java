@@ -1,5 +1,9 @@
 package se.eloff.fudge.client;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import se.eloff.fudge.client.bean.User;
 
 import com.google.gwt.event.shared.EventBus;
@@ -84,7 +88,9 @@ public class LoginScreen extends DynamicForm implements ClickHandler {
 			public void onSuccess(User result) {
 				System.out.println("Success");
 				errorItem.setValue("");
+				Fudge.user = result;
 				bus.fireEventFromSource(new LoginEvent(result), LoginScreen.this);
+				
 								
 			}
 		};

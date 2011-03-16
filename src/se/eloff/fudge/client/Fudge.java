@@ -55,6 +55,8 @@ public class Fudge implements EntryPoint {
 
 	private VLayout mainLayout;
 
+	public static User user;
+
 	/**
 	 * This is the entry point method.
 	 */
@@ -71,6 +73,7 @@ public class Fudge implements EntryPoint {
 				} else {
 					createComponents(user);
 					createButtons();
+					Fudge.user = user;
 				}
 			}
 
@@ -130,9 +133,9 @@ public class Fudge implements EntryPoint {
 					}
 				});
 	}
-	
+
 	protected void createButtons() {
-		//CREATE LOGOUT BUTTON **********************'
+		// CREATE LOGOUT BUTTON **********************'
 		final Button logoutButton = new Button("Logout");
 		logoutButton.setStyleName("showLoginDialogButton");
 		logoutButton.addClickHandler(new ClickHandler() {
@@ -151,28 +154,30 @@ public class Fudge implements EntryPoint {
 				});
 
 			}
-		});	
+		});
 		topMenu.addMember(logoutButton);
-		
-		//CREATE ADMINBUTTON *******************
-		final Button adminButton = new Button("Admin");
-		
-		// Create the popup dialog box
-		final Window adminWindow = new Window();
-		adminWindow.setAutoCenter(true);
-		adminWindow.setAutoSize(true);
-		adminWindow.setTitle("Admin");
 
-		final AdminScreen adminScreen = new AdminScreen();
-		adminWindow.addItem(adminScreen);
+		if (Fudge.user.getAdminRights()) {
+			// CREATE ADMINBUTTON *******************
+			final Button adminButton = new Button("Admin");
 
-		adminButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				adminWindow.show();
-				adminScreen.focus();
-			}
-		});	
-		topMenu.addMember(adminButton);
+			// Create the popup dialog box
+			final Window adminWindow = new Window();
+			adminWindow.setAutoCenter(true);
+			adminWindow.setAutoSize(true);
+			adminWindow.setTitle("Admin");
+
+			final AdminScreen adminScreen = new AdminScreen();
+			adminWindow.addItem(adminScreen);
+
+			adminButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					adminWindow.show();
+					adminScreen.focus();
+				}
+			});
+			topMenu.addMember(adminButton);
+		}
 	}
 
 	private LoginServiceAsync getLoginService() {
@@ -198,22 +203,23 @@ public class Fudge implements EntryPoint {
 				tabSet.selectTab(tab);
 			}
 		});
-		
+
 		bus.addHandler(TopicEvent.TYPE, new TopicEventHandler() {
 			@Override
 			public void onShow(TopicEvent topicEvent) {
 				Topic t = topicEvent.getTopic();
-				System.out.println("Gonna show topic " + t.getId() + " in forum " + t.getForumId());
+				System.out.println("Gonna show topic " + t.getId()
+						+ " in forum " + t.getForumId());
 				Tab tab = openTopic(t);
 				tabSet.addTab(tab);
 				tabSet.selectTab(tab);
 			}
 		});
-		
+
 		// index.hide();
-		
+
 		indexTab = new Tab("Index");
-		
+
 		indexTab.setPane(index);
 
 		tabSet = new TabSet();
@@ -221,7 +227,7 @@ public class Fudge implements EntryPoint {
 		tabSet.setHeight("*");
 
 		tabSet.addTab(indexTab);
-		
+
 		mainLayout.addMember(tabSet);
 	}
 
