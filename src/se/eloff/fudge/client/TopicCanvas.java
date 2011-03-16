@@ -148,8 +148,12 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 
 					@Override
 					public void onSuccess(Boolean result) {
-						//appendItem(post);
-						//postEditor.setMessage("");
+						itemCanvas.setAnimateMembers(true);
+						int position = currentItems.indexOf(post);
+						currentItems.remove(post);
+						itemCanvas.removeMember(itemCanvas.getMember(position));
+						//addMember(createItem(item), position);
+						
 						System.out.println("great succes");
 					}
 

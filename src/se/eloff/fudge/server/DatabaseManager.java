@@ -33,9 +33,9 @@ public class DatabaseManager {
 		try {
 			System.out.println("getConnection()");
 			String filename = "fudge.db";
-			//String filePath = "/" + System.getProperty("user.home") + "/workspace/Fudge/war/" + filename;
+			// String filePath = "/" + System.getProperty("user.home") +
+			// "/workspace/Fudge/war/" + filename;
 			String filePath = "C:\\Users\\Thor\\fudge.db";
-
 
 			File f = new File(filePath);
 			boolean createTable = !f.exists();
@@ -68,9 +68,8 @@ public class DatabaseManager {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate("drop table if exists users;");
 
-		stat
-				.executeUpdate("create table users (uid integer primary key, "
-						+ "name varchar(20) unique , password varchar(20), isAdmin integer, isMod integer, email varchar(20));");
+		stat.executeUpdate("create table users (uid integer primary key, "
+				+ "name varchar(20) unique , password varchar(20), isAdmin integer, isMod integer, email varchar(20));");
 
 		// Create default user
 		PreparedStatement prep = conn
@@ -159,7 +158,7 @@ public class DatabaseManager {
 	public User checkUserCredentials(Connection conn, String username,
 			String password) throws SQLException {
 		PreparedStatement stat = conn
-				//.prepareStatement("select uid, isAdmin, isMod from users where name = ? and password = ?");
+		// .prepareStatement("select uid, isAdmin, isMod from users where name = ? and password = ?");
 				.prepareStatement("select uid, isMod, isAdmin, email from users where name = ? and password = ?");
 		stat.setString(1, username);
 		stat.setString(2, password);
@@ -168,21 +167,21 @@ public class DatabaseManager {
 		User user = new User();
 		user.setUsername(username);
 		user.setEmail(rs.getString("email"));
-		if(rs.getInt("isAdmin") == 1)
+		if (rs.getInt("isAdmin") == 1)
 			user.setAdminRights(true);
-		if(rs.getInt("isAdmin") == 0)
+		if (rs.getInt("isAdmin") == 0)
 			user.setAdminRights(false);
-		if(rs.getInt("isMod") == 1)
+		if (rs.getInt("isMod") == 1)
 			user.setModeratorRights(true);
-		if(rs.getInt("isMod") == 0)
+		if (rs.getInt("isMod") == 0)
 			user.setModeratorRights(false);
 
 		int numRows = 0;
 		while (rs.next()) {
 			++numRows;
 			user.setId(rs.getInt("uid"));
-			//user.setAdminRights(rs.getInt("isAdmin") == 1);
-			//user.setModeratorRights(rs.getInt("isMod") == 1);
+			// user.setAdminRights(rs.getInt("isAdmin") == 1);
+			// user.setModeratorRights(rs.getInt("isMod") == 1);
 		}
 		rs.close();
 
@@ -216,11 +215,10 @@ public class DatabaseManager {
 	public Topic[] getAllTopics(Connection conn, Forum forum)
 			throws SQLException {
 		PreparedStatement stat = conn
-		.prepareStatement("select fid, t.tid, t.name, p.pid, p.message, p.postedOnDate from topics as t " +
-				"inner join " +
-				"(select tid, pid, message, postedOnDate, min(pid) from posts group by tid) as p " +
-				"on t.tid = p.tid " +
-				"where fid = ?;");
+				.prepareStatement("select fid, t.tid, t.name, p.pid, p.message, p.postedOnDate from topics as t "
+						+ "inner join "
+						+ "(select tid, pid, message, postedOnDate, min(pid) from posts group by tid) as p "
+						+ "on t.tid = p.tid " + "where fid = ?;");
 		stat.setInt(1, forum.getId());
 		ResultSet rs = stat.executeQuery();
 		ArrayList<Topic> topics = new ArrayList<Topic>();
@@ -243,7 +241,8 @@ public class DatabaseManager {
 
 	public User[] getAllUsers(Connection conn) throws SQLException {
 		Statement stat = conn.createStatement();
-		ResultSet rs = stat.executeQuery("select uid, name, isMod, isAdmin, password, email from users");
+		ResultSet rs = stat
+				.executeQuery("select uid, name, isMod, isAdmin, password, email from users");
 		ArrayList<User> users = new ArrayList<User>();
 		while (rs.next()) {
 			User u = new User();
@@ -278,11 +277,11 @@ public class DatabaseManager {
 
 	public Post[] getAllPosts(Connection conn, Topic topic) throws SQLException {
 		PreparedStatement stat = conn
-				.prepareStatement("select pid, tid, posts.uid, postedOnDate, message, " +
-						"users.name, users.email " +
-						"from posts " +
-						"left join users on posts.uid = users.uid " +
-						"where tid = ?");
+				.prepareStatement("select pid, tid, posts.uid, postedOnDate, message, "
+						+ "users.name, users.email "
+						+ "from posts "
+						+ "left join users on posts.uid = users.uid "
+						+ "where tid = ?");
 		stat.setInt(1, topic.getId());
 		ResultSet rs = stat.executeQuery();
 
@@ -305,7 +304,6 @@ public class DatabaseManager {
 		}
 		return posts.toArray(new Post[0]);
 	}
-
 
 	public void createPost(Connection conn, Post post) throws SQLException {
 		PreparedStatement prep = conn
@@ -336,46 +334,45 @@ public class DatabaseManager {
 		prep.setString(4, user.getPassword());
 		prep.setString(5, user.getEmail());
 
-
 		prep.execute();
-		
+
 		ResultSet rs = prep.getGeneratedKeys();
 		rs.next();
 		System.out.println("Du fick ID nr: " + rs.getInt(1));
 		user.setId(rs.getInt(1));
-		
+
 		return user;
 	}
 
-	public User editUser(Connection conn, User user)
-			throws SQLException {
+	public User editUser(Connection conn, User user) throws SQLException {
 		PreparedStatement prep = conn
-		.prepareStatement("UPDATE users SET name = ?, isAdmin = ?, isMod = ? , password = ?, email = ? WHERE uid = ?");
+				.prepareStatement("UPDATE users SET name = ?, isAdmin = ?, isMod = ? , password = ?, email = ? WHERE uid = ?");
 		prep.setString(1, user.getUsername());
-		System.out.println("modrights : " +user.getModeratorRights());
+		System.out.println("modrights : " + user.getModeratorRights());
 
-		if(user.getAdminRights())
+		if (user.getAdminRights())
 			prep.setInt(2, 1);
 		else
-			prep.setInt(2,0);
-		if(user.getModeratorRights()){
-			prep.setInt(3,1);
+			prep.setInt(2, 0);
+		if (user.getModeratorRights()) {
+			prep.setInt(3, 1);
 			System.out.println("ISMOD SATTES TILL TRUE; YO");
-		}
-		else
-			prep.setInt(3,0);
+		} else
+			prep.setInt(3, 0);
 		System.out.println(user.getId());
-		prep.setInt(4,user.getId());
-		prep.setString(5,user.getPassword());
-		prep.setString(6,user.getEmail());
-		
+		prep.setInt(4, user.getId());
+		prep.setString(5, user.getPassword());
+		prep.setString(6, user.getEmail());
+
 		prep.execute();
-		
+
 		return user;
 	}
 
-	public Topic createTopic(Connection conn, Topic topic, Post post) throws SQLException {
-		PreparedStatement prep = conn.prepareStatement("insert into topics (fid, name) values (?, ?)");
+	public Topic createTopic(Connection conn, Topic topic, Post post)
+			throws SQLException {
+		PreparedStatement prep = conn
+				.prepareStatement("insert into topics (fid, name) values (?, ?)");
 		prep.setInt(1, topic.getForumId());
 		prep.setString(2, topic.getName());
 		prep.execute();
@@ -391,5 +388,15 @@ public class DatabaseManager {
 		topic.setPost(post);
 
 		return topic;
+	}
+
+	public void deletePost(Connection conn, Post post) throws SQLException {
+		PreparedStatement prep = conn.prepareStatement("DELETE FROM posts WHERE pid LIKE ?");
+		System.out.println("databasemanager: trying to delete post with id: " + post.getId());
+		prep.setInt(1, post.getId());
+
+
+		prep.execute();
+
 	}
 }

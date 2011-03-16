@@ -68,6 +68,7 @@ public abstract class ItemCanvas<ContainerType, ItemType> extends VStack {
 		currentItems.add(item);
 		itemCanvas.addMember(createItem(item), position);
 	}
+	
 
 	protected abstract Canvas createItem(ItemType item);
 
