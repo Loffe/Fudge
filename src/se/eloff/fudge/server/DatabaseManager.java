@@ -33,9 +33,7 @@ public class DatabaseManager {
 		try {
 			System.out.println("getConnection()");
 			String filename = "fudge.db";
-			// String filePath = "/" + System.getProperty("user.home") +
-			// "/workspace/Fudge/war/" + filename;
-			String filePath = "C:\\Users\\Thor\\fudge.db";
+			String filePath = "/" + System.getProperty("user.dir") + filename;
 
 			File f = new File(filePath);
 			boolean createTable = !f.exists();
