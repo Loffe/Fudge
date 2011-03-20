@@ -67,6 +67,7 @@ public class TopicCanvas extends ItemCanvas<Topic, Post> {
 			public void onSuccess(Boolean result) {
 				appendItem(post);
 				postEditor.setMessage("");
+				bus.fireEventFromSource(new RefreshEvent(), currentContainer);
 			}
 
 			@Override

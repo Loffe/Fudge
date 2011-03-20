@@ -186,6 +186,7 @@ public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 				appendItem(result);
 				editor.setMessage("");
 				editor.setTitle("");
+				bus.fireEventFromSource(new RefreshEvent(), currentContainer);
 				getCreateTopicDialog().hide();
 			}
 
