@@ -8,6 +8,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.widgets.Button;
@@ -216,6 +217,8 @@ public class Fudge implements EntryPoint {
 			}
 		});
 
+		bus.addHandler(RefreshEvent.TYPE, new FudgeRefreshEventHandler());
+
 		// index.hide();
 
 		indexTab = new Tab("Index");
@@ -252,4 +255,33 @@ public class Fudge implements EntryPoint {
 	private native void reload() /*-{
 		$wnd.location.reload();
 	}-*/;
+
+	/**
+	 * Reacts to changes to events that need a refresh of a view. When a topic
+	 * is created the index needs a refresh to update the number of topics.
+	 */
+	class FudgeRefreshEventHandler implements RefreshEventHandler {
+		@Override
+		public void onRefresh(RefreshEvent refreshEvent) {
+			Object source = refreshEvent.getSource();
+			if (source instanceof Topic) {
+				System.out.println("topic need refresh, but why?");
+				Topic topic = (Topic) source;
+				System.out.println(topic.getForumId());
+			} else if (source instanceof Forum) {
+				// A forum was changed so we need to refresh the index
+				Timer t = new Timer() {
+					@Override
+					public void run() {
+						index.showItem();
+					}
+
+				};
+				// This is done in background (another tab) so delay it to
+				// allow smooth animations in open tab
+				t.schedule(2000);
+			}
+		}
+
+	}
 }

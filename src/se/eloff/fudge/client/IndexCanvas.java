@@ -42,6 +42,10 @@ public class IndexCanvas extends ItemCanvas<IndexCanvas.Index, Forum> {
 		getService().getAllForums(updateCallback);
 	}
 
+	public void showItem() {
+		showItem(null);
+	}
+
 	@Override
 	protected void updateList(Forum[] forums) {
 		super.updateList(forums);
