@@ -22,6 +22,7 @@ public abstract class PostEditor extends DynamicForm implements ClickHandler {
 		this.setTitleOrientation(TitleOrientation.TOP);
 
 		if (showTitle) {
+			this.setWidth(550);
 			title = new TextItem("Title");
 			title.setWidth("*");
 			title.setRequired(true);
@@ -31,6 +32,7 @@ public abstract class PostEditor extends DynamicForm implements ClickHandler {
 		message.setShowTitle(true);
 		message.setRequired(true);
 		message.setWidth("*");
+		message.setHeight(200);
 
 		submitButton = new ButtonItem("Post");
 		submitButton.addClickHandler(this);

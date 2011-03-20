@@ -161,6 +161,7 @@ public class ForumCanvas extends ItemCanvas<Forum, Topic> {
 				submitTopic();
 			}
 		};
+		editor.setShowEdges(false);
 
 		dialogBox.addItem(editor);
 
