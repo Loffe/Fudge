@@ -6,10 +6,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.layout.HStack;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VStack;
 
 public class IndexCanvas extends ItemCanvas<IndexCanvas.Index, Forum> {
@@ -51,30 +53,39 @@ public class IndexCanvas extends ItemCanvas<IndexCanvas.Index, Forum> {
 
 	@Override
 	protected Canvas createItem(final Forum forum) {
-		HStack hstack = new HStack();
+		Layout hstack = new HLayout();
+		hstack.setPadding(5);
+		hstack.setShowEdges(true);
+		hstack.setWidth100();
+		hstack.setAutoHeight();
 		hstack.setStyleName("forum");
-		hstack.setWidth("80%");
+		hstack.setCursor(Cursor.HAND);
 		
 		VStack vstack = new VStack();
-		Label forúmlabel = new Label(forum.getName());
-		forúmlabel.setStyleName("forumName");
-		forúmlabel.setWidth(400);
-		forúmlabel.setHeight(40);
-		forúmlabel.setCursor(Cursor.HAND);
+		Canvas forumLabel = new HTMLFlow(forum.getName());
+		forumLabel.setStyleName("forumName");
+		forumLabel.setCursor(Cursor.HAND);
 		
-		forúmlabel.addClickHandler(new ClickHandler() {
+		forumLabel.addClickHandler(new ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
 				bus.fireEvent(new ForumEvent(forum));
 				
 			}
 		});
-		
-		vstack.addMember(forúmlabel);
-		vstack.addMember(new Label(forum.getDescription()));
-		
+
+		vstack.addMember(forumLabel);
+		vstack.addMember(new HTMLFlow(forum.getDescription()));
+
 		hstack.addMember(vstack);
-		hstack.addMember(new Label(String.valueOf(forum.getNrOfTopics())));
+		int num = forum.getNrOfTopics();
+		String numberOfTopics = String.valueOf(forum.getNrOfTopics()) + " topic";
+		if (num != 1) {
+			// Append pluralis s
+			numberOfTopics += "s";
+		}
+
+		hstack.addMember(new HTMLFlow(numberOfTopics));
 		
 		
 
